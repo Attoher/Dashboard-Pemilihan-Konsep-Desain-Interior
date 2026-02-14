@@ -1,0 +1,483 @@
+const maxMahasiswa = 7;
+const maxWords = 30;
+
+const IDEAS_DATA = {
+    internal: {
+        name: 'Kinerja Internal',
+        ideas: [
+            { num: 1, title: 'Ide aktivitas/kegiatan penting yang baru', room: 5 },
+            { num: 2, title: 'Ide workflow (urutan pengerjaan tugas) baru', room: 6 },
+            { num: 3, title: 'Ide role/responsibilities (staff) dengan tugas baru', room: 7 },
+            { num: 4, title: 'Ide tools/technologies (peralatan) baru', room: 8 }
+        ]
+    },
+    customer: {
+        name: 'Customer & Experience',
+        ideas: [
+            { num: 1, title: 'Ide mengatasi "pains" (yang tidak diinginkan)', room: 4 },
+            { num: 2, title: 'Ide mewujudkan "gains" (harapan)', room: 5 },
+            { num: 3, title: 'Ide keadaan (Konteks) penting yang dihadapi', room: 6 }
+        ]
+    },
+    competition: {
+        name: 'Persaingan',
+        ideas: [
+            { num: 1, title: 'Ide strategi sebagai market leader', room: 7 },
+            { num: 2, title: 'Ide strategi sebagai market challenger', room: 8 },
+            { num: 3, title: 'Ide strategi sebagai market follower', room: 9 },
+            { num: 4, title: 'Ide strategi sebagai market nicher', room: 10 },
+            { num: 5, title: 'Ide Unique Selling Propositions (USP) atau Value Propositions', room: 11 },
+            { num: 6, title: 'Ide event atau aktivitas baru', room: 12 }
+        ]
+    }
+};
+
+let appData = {
+    internal: { inputs: [], keyword: '', note: '' },
+    customer: { inputs: [], keyword: '', note: '' },
+    competition: { inputs: [], keyword: '', note: '' }
+};
+
+function loadData() {
+    const saved = localStorage.getItem('dashboardData');
+    if (saved) {
+        try {
+            appData = JSON.parse(saved);
+        } catch (e) {
+            console.error('Gagal memuat data', e);
+        }
+    } else {
+        appData.internal.inputs = [''];
+        appData.customer.inputs = [''];
+        appData.competition.inputs = [''];
+    }
+    loadIdentitas();
+    renderAll();
+}
+
+function loadIdentitas() {
+    const identitas = localStorage.getItem('identitasData');
+    if (identitas) {
+        try {
+            const data = JSON.parse(identitas);
+            document.getElementById('namaMahasiswa').value = data.namaMahasiswa || '';
+            document.getElementById('judulTugas').value = data.judulTugas || '';
+        } catch (e) {
+            console.error('Gagal memuat identitas', e);
+        }
+    }
+}
+
+function saveIdentitas() {
+    const identitas = {
+        namaMahasiswa: document.getElementById('namaMahasiswa').value,
+        judulTugas: document.getElementById('judulTugas').value
+    };
+    localStorage.setItem('identitasData', JSON.stringify(identitas));
+}
+
+function saveData() {
+    localStorage.setItem('dashboardData', JSON.stringify(appData));
+}
+
+function renderAll() {
+    renderCategory('internal');
+    renderCategory('customer');
+    renderCategory('competition');
+    showSavedNote('internal');
+    showSavedNote('customer');
+    showSavedNote('competition');
+    calculateAverages();
+}
+
+function renderCategory(type) {
+    const container = document.getElementById(type + 'Inputs');
+    container.innerHTML = '';
+    const data = appData[type].inputs;
+    for (let i = 0; i < data.length; i++) {
+        addInputRow(type, i, data[i]);
+    }
+    document.getElementById(type + 'Keyword').value = appData[type].keyword || '';
+    document.getElementById(type + 'Note').value = appData[type].note || '';
+}
+
+function addInputRow(type, index, value) {
+    const container = document.getElementById(type + 'Inputs');
+    const wrapper = document.createElement('div');
+    wrapper.className = 'input-row';
+
+    const label = document.createElement('label');
+    label.textContent = 'Mahasiswa ' + (index + 1);
+
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.min = 1;
+    input.max = 100;
+    input.placeholder = 'Skor 1-100';
+    input.value = value;
+    input.dataset.type = type;
+    input.dataset.index = index;
+    input.oninput = function(e) {
+        const t = e.target.dataset.type;
+        const idx = e.target.dataset.index;
+        appData[t].inputs[idx] = e.target.value;
+        saveData();
+        calculateAverages();
+    };
+
+    wrapper.appendChild(label);
+    wrapper.appendChild(input);
+    container.appendChild(wrapper);
+}
+
+function addMahasiswa(type) {
+    if (appData[type].inputs.length >= maxMahasiswa) {
+        alert('Maksimal 7 mahasiswa per kategori.');
+        return;
+    }
+    appData[type].inputs.push('');
+    renderCategory(type);
+    saveData();
+}
+
+function hapusMahasiswa(type) {
+    if (appData[type].inputs.length <= 1) {
+        alert('Minimal 1 mahasiswa harus dipertahankan.');
+        return;
+    }
+    appData[type].inputs.pop();
+    renderCategory(type);
+    saveData();
+}
+
+function calculateAverage(containerId, avgId, type) {
+    const inputs = appData[type].inputs;
+    let total = 0;
+    let count = 0;
+    for (let val of inputs) {
+        if (val !== '') {
+            const num = parseFloat(val);
+            if (!isNaN(num)) {
+                total += num;
+                count++;
+            }
+        }
+    }
+    const avg = count ? (total / count).toFixed(2) : 0;
+    document.getElementById(avgId).innerText = avg;
+    return parseFloat(avg);
+}
+
+function calculateAverages() {
+    calculateAverage('internalInputs', 'internalAvg', 'internal');
+    calculateAverage('customerInputs', 'customerAvg', 'customer');
+    calculateAverage('competitionInputs', 'competitionAvg', 'competition');
+}
+
+function countWords(text) {
+    return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
+function simpanCatatan(type) {
+    const keyword = document.getElementById(type + 'Keyword').value.trim();
+    const note = document.getElementById(type + 'Note').value.trim();
+
+    if (countWords(note) > maxWords) {
+        alert('Catatan maksimal 30 kata.');
+        return;
+    }
+
+    if (note === '') {
+        alert('Catatan tidak boleh kosong.');
+        return;
+    }
+
+    appData[type].keyword = keyword;
+    appData[type].note = note;
+    saveData();
+    showSavedNote(type);
+}
+
+function hapusCatatan(type) {
+    appData[type].keyword = '';
+    appData[type].note = '';
+    document.getElementById(type + 'Keyword').value = '';
+    document.getElementById(type + 'Note').value = '';
+    saveData();
+    showSavedNote(type);
+}
+
+function showSavedNote(type) {
+    const display = document.getElementById(type + 'Saved');
+    const keyword = appData[type].keyword;
+    const note = appData[type].note;
+    if (note) {
+        display.innerHTML = '<strong>' + (keyword || '') + '</strong><br>' + note;
+        display.classList.remove('hidden');
+    } else {
+        display.classList.add('hidden');
+    }
+}
+
+function processSelection() {
+    const internalAvg = parseFloat(document.getElementById('internalAvg').innerText) || 0;
+    const customerAvg = parseFloat(document.getElementById('customerAvg').innerText) || 0;
+    const competitionAvg = parseFloat(document.getElementById('competitionAvg').innerText) || 0;
+
+    let result = '';
+    let category = 'internal';
+    
+    if (internalAvg === 0 && customerAvg === 0 && competitionAvg === 0) {
+        result = 'Silakan isi skor terlebih dahulu.';
+    } else if (internalAvg >= customerAvg && internalAvg >= competitionAvg) {
+        result = 'Prioritas Konsep: Penguatan Kinerja Internal';
+        category = 'internal';
+    } else if (customerAvg >= internalAvg && customerAvg >= competitionAvg) {
+        result = 'Prioritas Konsep: Engagement & Experience Customer';
+        category = 'customer';
+    } else {
+        result = 'Prioritas Konsep: Strategi Diferensiasi Persaingan';
+        category = 'competition';
+    }
+
+    document.getElementById('resultChoice').innerText = result;
+    document.getElementById('modalResultText').innerText = result;
+    
+    if (internalAvg > 0 || customerAvg > 0 || competitionAvg > 0) {
+        drawChart(internalAvg, customerAvg, competitionAvg);
+        showCategoryDescription(category);
+    }
+    
+    document.getElementById('resultModal').classList.remove('hidden');
+}
+
+function drawChart(i, c, comp) {
+    const canvas = document.getElementById('chartCanvas');
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+
+    ctx.clearRect(0, 0, width, height);
+
+    const barWidth = 80;
+    const spacing = 40;
+    const baseX = 50;
+    const maxVal = Math.max(i, c, comp, 100);
+
+    function drawBar(x, value, color, label) {
+        const barHeight = (value / maxVal) * (height - 80);
+        ctx.fillStyle = color;
+        ctx.fillRect(x, height - 40 - barHeight, barWidth, barHeight);
+        ctx.fillStyle = '#333';
+        ctx.font = '12px Arial, sans-serif';
+        ctx.fillText(label, x + 10, height - 20);
+        ctx.fillText(value, x + 10, height - 45 - barHeight);
+    }
+
+    drawBar(baseX, i, 'rgba(59, 130, 246, 0.8)', 'Internal');
+    drawBar(baseX + barWidth + spacing, c, 'rgba(34, 197, 94, 0.8)', 'Customer');
+    drawBar(baseX + 2*(barWidth + spacing), comp, 'rgba(239, 68, 68, 0.8)', 'Persaingan');
+}
+
+function showCategoryDescription(category) {
+    let description = '';
+    
+    if (category === 'internal') {
+        description = `<strong>Kinerja Internal:</strong><br>
+            Fokus pada optimalisasi internal untuk meningkatkan revenue. Kategori ini mencakup:<br>
+            <ul style="margin: 0.5rem 0 0 1.5rem;">
+                <li>Ide aktivitas/kegiatan penting yang baru</li>
+                <li>Ide workflow (urutan pengerjaan tugas) baru</li>
+                <li>Ide role/responsibilities (staff) dengan tugas baru</li>
+                <li>Ide tools/technologies (peralatan) baru</li>
+            </ul>
+            Setiap ide akan ditempatkan di ruangan/lokasi yang sesuai (Ruangan 5-8).`;
+    } else if (category === 'customer') {
+        description = `<strong>Customer & Experience:</strong><br>
+            Fokus pada pengalaman pelanggan untuk mendorong revenue dan loyalitas. Kategori ini mencakup:<br>
+            <ul style="margin: 0.5rem 0 0 1.5rem;">
+                <li>Ide mengatasi "pains" (yang tidak diinginkan)</li>
+                <li>Ide mewujudkan "gains" (harapan pelanggan)</li>
+                <li>Ide keadaan (konteks) penting yang dihadapi pelanggan</li>
+            </ul>
+            Setiap ide akan ditempatkan di ruangan/lokasi yang sesuai (Ruangan 4-6).`;
+    } else if (category === 'competition') {
+        description = `<strong>Strategi Persaingan:</strong><br>
+            Fokus pada diferensiasi dan positioning untuk meningkatkan revenue di pasar kompetitif. Kategori ini mencakup:<br>
+            <ul style="margin: 0.5rem 0 0 1.5rem;">
+                <li>Ide strategi sebagai market leader</li>
+                <li>Ide strategi sebagai market challenger</li>
+                <li>Ide strategi sebagai market follower</li>
+                <li>Idea strategi sebagai market nicher</li>
+                <li>Idea Unique Selling Propositions (USP) atau Value Propositions</li>
+                <li>Idea event atau aktivitas baru</li>
+            </ul>
+            Setiap ide akan ditempatkan di ruangan/lokasi yang sesuai (Ruangan 7-12).`;
+    }
+    
+    document.getElementById('categoryDescription').innerHTML = description;
+}
+
+function updateSteps(result) {
+    const stepsList = document.getElementById('stepsList');
+    stepsList.innerHTML = '';
+    let steps = [];
+    if (result.includes('Kinerja Internal')) {
+        steps = [
+            'Evaluasi efisiensi operasional saat ini',
+            'Identifikasi area peningkatan produktivitas',
+            'Rancang ulang alur kerja berbasis teknologi',
+            'Uji coba prototype dengan tim internal',
+            'Implementasi dan monitoring KPI'
+        ];
+    } else if (result.includes('Customer')) {
+        steps = [
+            'Riset kebutuhan dan preferensi pelanggan',
+            'Buat customer journey map',
+            'Desain touchpoint yang interaktif dan personal',
+            'Gather feedback melalui focus group',
+            'Iterasi desain berdasarkan masukan'
+        ];
+    } else if (result.includes('Persaingan')) {
+        steps = [
+            'Analisis kompetitor utama',
+            'Tentukan unique selling proposition (USP)',
+            'Kembangkan konsep diferensiasi',
+            'Validasi dengan calon pengguna',
+            'Siapkan strategi pemasaran'
+        ];
+    } else {
+        steps = ['Isi data terlebih dahulu.'];
+    }
+    steps.forEach(s => {
+        const li = document.createElement('li');
+        li.textContent = s;
+        li.onclick = () => alert('Langkah: ' + s);
+        stepsList.appendChild(li);
+    });
+}
+
+function showCategoryDetail(type) {
+    const data = appData[type];
+    const ideasData = IDEAS_DATA[type];
+    const categoryNames = {
+        'internal': 'Kinerja Internal',
+        'customer': 'Customer & Experience',
+        'competition': 'Persaingan'
+    };
+    
+    document.getElementById('detailModalTitle').textContent = 'Detail ' + categoryNames[type];
+    
+    let html = `
+        <div class="detail-section">
+            <h4>Ide untuk Kategori Ini</h4>
+            <ul class="ideas-list">
+    `;
+    
+    ideasData.ideas.forEach(idea => {
+        html += `
+            <li>
+                <strong>${idea.num}. ${idea.title}</strong>
+                <br><small style="color: #666; font-size: 0.85rem;">→ Ruangan</small>
+            </li>
+        `;
+    });
+    
+    html += `
+            </ul>
+        </div>
+        <div class="detail-section">
+            <h4>Kata Kunci</h4>
+            <p>${data.keyword || '<em>-</em>'}</p>
+        </div>
+        <div class="detail-section">
+            <h4>Catatan</h4>
+            <p>${data.note || '<em>-</em>'}</p>
+        </div>
+        <div class="detail-section">
+            <h4>Nilai Mahasiswa</h4>
+            <div class="values-list">
+    `;
+    
+    data.inputs.forEach((val, idx) => {
+        html += `<div class="value-item"><strong>Mahasiswa ${idx+1}:</strong> ${val || '<em>belum diisi</em>'}</div>`;
+    });
+    
+    html += `
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('detailModalBody').innerHTML = html;
+    document.getElementById('detailModal').classList.remove('hidden');
+}
+
+function closeDetailModal() {
+    const modal = document.getElementById('detailModal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
+function closeModal() {
+    const modal = document.getElementById('resultModal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
+function goToResultPage() {
+    window.open('result.html', '_blank');
+}
+
+function goToIdeasPage() {
+    const internalAvg = parseFloat(document.getElementById('internalAvg').innerText) || 0;
+    const customerAvg = parseFloat(document.getElementById('customerAvg').innerText) || 0;
+    const competitionAvg = parseFloat(document.getElementById('competitionAvg').innerText) || 0;
+    
+    let category = 'internal';
+    if (internalAvg === 0 && customerAvg === 0 && competitionAvg === 0) {
+        alert('Silakan isi skor terlebih dahulu.');
+        return;
+    } else if (customerAvg > internalAvg && customerAvg >= competitionAvg) {
+        category = 'customer';
+    } else if (competitionAvg > internalAvg && competitionAvg > customerAvg) {
+        category = 'competition';
+    }
+    
+    localStorage.setItem('winningCategory', category);
+    
+    window.location.href = 'ideas.html?category=' + category;
+}
+
+window.onload = function() {
+    loadData();
+    
+    const modal = document.getElementById('resultModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    }
+    
+    const detailModal = document.getElementById('detailModal');
+    if (detailModal) {
+        detailModal.classList.add('hidden');
+        detailModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDetailModal();
+            }
+        });
+    }
+    
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeModal();
+            closeDetailModal();
+        }
+    });
+};

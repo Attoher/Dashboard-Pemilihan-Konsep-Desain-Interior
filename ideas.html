@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Detail Idea Konsep Desain</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="Logo.png">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="ideas-top-section">
+            <div>
+                <h1>Rincian Idea Konsep Desain</h1>
+                <div id="identitasDisplay" style="background: #f0f9ff; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem; border-left: 4px solid #3b82f6;">
+                    <div style="font-size: 0.875rem; color: #6b7280;">
+                        <div><strong>Nama Mahasiswa:</strong> <span id="displayNama">-</span></div>
+                        <div><strong>Judul Tugas:</strong> <span id="displayJudul">-</span></div>
+                    </div>
+                </div>
+                <p id="categoryLabel" class="subtitle" style="margin-bottom: 0;">Kategori: Kinerja Internal</p>
+            </div>
+            <button onclick="window.location.href='index.html'" class="btn back-btn">Kembali ke Dashboard</button>
+        </div>
+
+        <div class="ideas-main-layout">
+            <!-- LEFT: Ideas Column -->
+            <div class="ideas-left">
+                <div id="ideasContent">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+
+            <!-- RIGHT: Rooms Column -->
+            <div class="ideas-right">
+                <h2 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1.5rem; color: #1f2937;">Ruangan / Tempat Idea Penting</h2>
+                <div id="roomsGrid" class="rooms-grid">
+                    <!-- Dynamically populated with rooms -->
+                </div>
+                <p id="noRoomsMsg" class="no-rooms" style="display: none;">Tambahkan idea terlebih dahulu untuk menentukan ruangan yang dibutuhkan</p>
+            </div>
+        </div>
+
+        <div class="ideas-footer">
+            <button onclick="exportData()" class="btn export-btn">Export PDF</button>
+            <button onclick="goToResultPage()" class="btn result-page-btn">Lihat Hasil</button>
+        </div>
+    </div>
+
+    <script src="ideas.js"></script>
+</body>
+</html>

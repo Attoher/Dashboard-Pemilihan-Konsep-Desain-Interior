@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Konsep Desain Interior</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="Logo.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Dashboard Pemilihan Konsep Desain Interior</h1>
+    <p class="subtitle">Bagian 1: Isian Skor Maksimal 7 Mahasiswa per Kategori (Data Tersimpan Otomatis)</p>
+
+    <!-- INPUT MAHASISWA DAN JUDUL TUGAS -->
+    <div style="background: #f0f9ff; border: 2px solid #3b82f6; border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem;">
+        <h2 style="font-size: 1.25rem; margin-bottom: 1rem; color: #1e40af;">Identitas Pengerjaan</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div>
+                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1f2937;">Nama Mahasiswa</label>
+                <input id="namaMahasiswa" type="text" placeholder="Masukkan nama mahasiswa" 
+                       onchange="saveIdentitas()" 
+                       style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 1rem;">
+            </div>
+            <div>
+                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1f2937;">Judul Tugas Studio</label>
+                <input id="judulTugas" type="text" placeholder="Masukkan judul tugas studio" 
+                       onchange="saveIdentitas()" 
+                       style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 1rem;">
+            </div>
+        </div>
+    </div>
+
+    <!-- PETUNJUK PENGISIAN -->
+    <div class="instructions">
+        <h2>Petunjuk Pengisian</h2>
+        <p>Pelajari minimal 5 sumber pustaka baik dari web official ternama maupun dari hasil penelitian secara ilmiah sesuai obyek desain interior yang akan didesain. Setelah itu simpulkan dari analisa terhadap 5 sumber ilmiah tersebut berapa skor nilai antara 1 sampai 100 dari masing-masing kategori isian yang ada. Terdapat 3 kategori yang harus dinilai, yakni Kinerja Internal, Customer, dan Persaingan. Isilah skornya berdasarkan seberapa penting masing-masing kategori menurut anda dapat menghasilkan revenue (pemasukan pendapatan) bagi obyek yang didesain.</p>
+    </div>
+
+    <div class="category-grid">
+        <!-- KATEGORI 1: Kinerja Internal -->
+        <div class="category-card blue">
+            <h2>Kategori 1: Kinerja Internal</h2>
+            <p class="category-range">Nilai: 1-100</p>
+            <div id="internalInputs" class="inputs-container"></div>
+            <div class="button-group">
+                <button onclick="addMahasiswa('internal')" class="btn blue-bg">Tambah Mahasiswa</button>
+                <button onclick="hapusMahasiswa('internal')" class="btn gray-bg">Kurangi Mahasiswa</button>
+            </div>
+            <div class="average">Rata-rata: <span id="internalAvg">0</span></div>
+
+            <hr>
+
+            <h3>Kata Kunci & Catatan Penting (maks 30 kata)</h3>
+            <input id="internalKeyword" type="text" placeholder="Kata kunci utama">
+            <textarea id="internalNote" placeholder="Catatan penting (maks 30 kata)"></textarea>
+            <div class="button-group">
+                <button onclick="simpanCatatan('internal')" class="btn blue-bg">Simpan Catatan</button>
+                <button onclick="hapusCatatan('internal')" class="btn gray-bg">Hapus Catatan</button>
+            </div>
+            <div id="internalSaved" class="saved-note hidden"></div>
+        </div>
+
+        <!-- KATEGORI 2: Customer & Experience -->
+        <div class="category-card green">
+            <h2>Kategori 2: Customer & Experience</h2>
+            <p class="category-range">Nilai: 1-100</p>
+            <div id="customerInputs" class="inputs-container"></div>
+            <div class="button-group">
+                <button onclick="addMahasiswa('customer')" class="btn green-bg">Tambah Mahasiswa</button>
+                <button onclick="hapusMahasiswa('customer')" class="btn gray-bg">Kurangi Mahasiswa</button>
+            </div>
+            <div class="average">Rata-rata: <span id="customerAvg">0</span></div>
+
+            <hr>
+
+            <h3>Kata Kunci & Catatan Penting (maks 30 kata)</h3>
+            <input id="customerKeyword" type="text" placeholder="Kata kunci utama">
+            <textarea id="customerNote" placeholder="Catatan penting (maks 30 kata)"></textarea>
+            <div class="button-group">
+                <button onclick="simpanCatatan('customer')" class="btn green-bg">Simpan Catatan</button>
+                <button onclick="hapusCatatan('customer')" class="btn gray-bg">Hapus Catatan</button>
+            </div>
+            <div id="customerSaved" class="saved-note hidden"></div>
+        </div>
+
+        <!-- KATEGORI 3: Persaingan -->
+        <div class="category-card red">
+            <h2>Kategori 3: Persaingan</h2>
+            <p class="category-range">Nilai: 1-100</p>
+            <div id="competitionInputs" class="inputs-container"></div>
+            <div class="button-group">
+                <button onclick="addMahasiswa('competition')" class="btn red-bg">Tambah Mahasiswa</button>
+                <button onclick="hapusMahasiswa('competition')" class="btn gray-bg">Kurangi Mahasiswa</button>
+            </div>
+            <div class="average">Rata-rata: <span id="competitionAvg">0</span></div>
+
+            <hr>
+
+            <h3>Kata Kunci & Catatan Penting (maks 30 kata)</h3>
+            <input id="competitionKeyword" type="text" placeholder="Kata kunci utama">
+            <textarea id="competitionNote" placeholder="Catatan penting (maks 30 kata)"></textarea>
+            <div class="button-group">
+                <button onclick="simpanCatatan('competition')" class="btn red-bg">Simpan Catatan</button>
+                <button onclick="hapusCatatan('competition')" class="btn gray-bg">Hapus Catatan</button>
+            </div>
+            <div id="competitionSaved" class="saved-note hidden"></div>
+        </div>
+    </div>
+
+    <!-- PROSES -->
+    <div class="process-section">
+        <h2>Proses Pemilihan Konsep</h2>
+        <button onclick="processSelection()" class="btn process-btn">Proses</button>
+        <div class="result-display">Hasil Pilihan: <span id="resultChoice">Belum diproses</span></div>
+    </div>
+
+<!-- MODAL HASIL KATEGORI TERPILIH -->
+        <div id="resultModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Kategori Terpilih</h3>
+                <button onclick="closeModal()" class="close-btn">&times;</button>
+            </div>
+            <div id="modalResultText" class="modal-result"></div>
+
+            <!-- Diagram Perbandingan -->
+            <div style="margin: 1.5rem 0; text-align: center;">
+                <h4 style="margin-bottom: 1rem;">Perbandingan Rata-rata Skor</h4>
+                <canvas id="chartCanvas" width="400" height="200" style="max-width: 100%;"></canvas>
+            </div>
+
+            <!-- Deskripsi Kategori -->
+            <div id="categoryDescription" style="background: #f3f4f6; padding: 1rem; border-radius: 0.75rem; margin-bottom: 1.5rem; font-size: 0.9rem; line-height: 1.6;"></div>
+
+            <!-- Tombol detail per kategori -->
+            <div class="modal-button-group">
+                <button onclick="showCategoryDetail('internal')" class="btn blue-bg">Detail Kinerja Internal</button>
+                <button onclick="showCategoryDetail('customer')" class="btn green-bg">Detail Customer</button>
+                <button onclick="showCategoryDetail('competition')" class="btn red-bg">Detail Persaingan</button>
+            </div>
+
+            <!-- Tombol lanjut ke ideas page -->
+            <div class="modal-footer">
+                <button onclick="goToIdeasPage()" class="btn ideas-btn">Lanjut ke Ide Penting</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DETAIL KATEGORI -->
+    <div id="detailModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="detailModalTitle">Detail Kategori</h3>
+                <button onclick="closeDetailModal()" class="close-btn">&times;</button>
+            </div>
+            <div id="detailModalBody" class="detail-modal-body">
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeDetailModal()" class="btn gray-bg">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
