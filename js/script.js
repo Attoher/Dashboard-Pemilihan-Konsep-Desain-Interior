@@ -430,7 +430,6 @@ function showCategoryDetail(type) {
         html += `
             <li>
                 <strong>${idea.num}. ${idea.title}</strong>
-                <br><small style="color: #666; font-size: 0.85rem;">→ Ruangan</small>
             </li>
         `;
     });
