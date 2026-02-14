@@ -492,6 +492,23 @@ function goToResultPage() {
 }
 
 function goToIdeasPage() {
+    // Validasi identitas
+    const nama = document.getElementById('namaMahasiswa').value.trim();
+    const judul = document.getElementById('judulTugas').value.trim();
+    
+    if (!nama && !judul) {
+        showAlert('Silakan isi <b>Nama Mahasiswa</b> dan <b>Judul Tugas</b> terlebih dahulu.', 'warning');
+        return;
+    }
+    if (!nama) {
+        showAlert('Silakan isi <b>Nama Mahasiswa</b> terlebih dahulu.', 'warning');
+        return;
+    }
+    if (!judul) {
+        showAlert('Silakan isi <b>Judul Tugas</b> terlebih dahulu.', 'warning');
+        return;
+    }
+
     const internalAvg = parseFloat(document.getElementById('internalAvg').innerText) || 0;
     const customerAvg = parseFloat(document.getElementById('customerAvg').innerText) || 0;
     const competitionAvg = parseFloat(document.getElementById('competitionAvg').innerText) || 0;

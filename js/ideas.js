@@ -74,13 +74,14 @@ function isIdeaComplete(item) {
     const ideas = ideasStorage[currentCategory][ideaKey] || [];
     const rooms = ideasStorage[currentCategory][roomKey] || [];
     
+    // Harus ada minimal 1 ide terisi
     const hasFilledIdea = ideas.some(v => v && v.trim());
     if (!hasFilledIdea) return false;
     
+    // SEMUA baris input yang ada harus terisi (ide + ruangan)
     for (let i = 0; i < ideas.length; i++) {
-        if (ideas[i] && ideas[i].trim()) {
-            if (!rooms[i] || !rooms[i].trim()) return false;
-        }
+        if (!ideas[i] || !ideas[i].trim()) return false;
+        if (!rooms[i] || !rooms[i].trim()) return false;
     }
     return true;
 }
@@ -462,6 +463,27 @@ function goBack() {
 }
 
 function goToResultPage() {
+    const categoryData = IDEAS_DATA[currentCategory];
+    if (!categoryData) {
+        window.location.href = 'result.html';
+        return;
+    }
+
+    // Cek apakah semua ide sudah terisi
+    const unlockedIdx = getUnlockedIndex();
+    const totalItems = categoryData.items.length;
+    const allComplete = unlockedIdx >= totalItems;
+
+    if (!allComplete) {
+        const filled = unlockedIdx;
+        const remaining = totalItems - filled;
+        showAlert(
+            `Masih ada <b>${remaining} ide</b> yang belum lengkap.<br>Silakan isi semua ide dan ruangan terlebih dahulu sebelum melihat hasil.`,
+            'warning'
+        );
+        return;
+    }
+
     window.location.href = 'result.html';
 }
 
