@@ -7,6 +7,7 @@
     <link rel="icon" type="image/png" href="../assets/Interior.png">
     <link rel="stylesheet" href="../css/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="../js/custom-alert.js"></script>
 </head>
 <body>
     <div class="result-container">
@@ -239,7 +240,7 @@
             const identitas = loadIdentitas();
 
             if (!dashData) {
-                alert('Data dashboard tidak ditemukan. Silakan isi di dashboard terlebih dahulu.');
+                showAlert('Data dashboard tidak ditemukan. Silakan isi di dashboard terlebih dahulu.', 'error');
                 return;
             }
 

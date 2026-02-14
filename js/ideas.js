@@ -286,7 +286,7 @@ function handleIdeaInput(e) {
 function handleIdeaBlur(e) {
     const wordCount = countWords(e.target.value);
     if (wordCount > 20) {
-        alert('Maksimal 20 kata!');
+        showAlert('Maksimal 20 kata!', 'warning');
         e.target.value = e.target.value.split(' ').slice(0, 20).join(' ');
     }
     saveIdeaInput(e.target);

@@ -149,7 +149,7 @@ function addInputRow(type, index, value) {
 
 function addMahasiswa(type) {
     if (appData[type].inputs.length >= maxMahasiswa) {
-        alert('Maksimal 7 mahasiswa per kategori.');
+        showAlert('Maksimal 7 mahasiswa per kategori.', 'warning');
         return;
     }
     appData[type].inputs.push('');
@@ -159,7 +159,7 @@ function addMahasiswa(type) {
 
 function hapusMahasiswa(type) {
     if (appData[type].inputs.length <= 1) {
-        alert('Minimal 1 mahasiswa harus dipertahankan.');
+        showAlert('Minimal 1 mahasiswa harus dipertahankan.', 'warning');
         return;
     }
     appData[type].inputs.pop();
@@ -200,17 +200,17 @@ function tambahCatatan(type) {
     const note = input.value.trim();
 
     if (note === '') {
-        alert('Catatan tidak boleh kosong.');
+        showAlert('Catatan tidak boleh kosong.', 'warning');
         return;
     }
 
     if (countWords(note) > maxWords) {
-        alert('Catatan maksimal 30 kata per catatan.');
+        showAlert('Catatan maksimal 30 kata per catatan.', 'warning');
         return;
     }
 
     if (appData[type].notes.length >= maxNotes) {
-        alert('Maksimal 20 catatan per kategori.');
+        showAlert('Maksimal 20 catatan per kategori.', 'warning');
         return;
     }
 
@@ -398,7 +398,7 @@ function updateSteps(result) {
     steps.forEach(s => {
         const li = document.createElement('li');
         li.textContent = s;
-        li.onclick = () => alert('Langkah: ' + s);
+        li.onclick = () => showAlert(s, 'info');
         stepsList.appendChild(li);
     });
 }
@@ -497,7 +497,7 @@ function goToIdeasPage() {
     
     let category = 'internal';
     if (internalAvg === 0 && customerAvg === 0 && competitionAvg === 0) {
-        alert('Silakan isi skor terlebih dahulu.');
+        showAlert('Silakan isi skor terlebih dahulu.', 'warning');
         return;
     } else if (customerAvg > internalAvg && customerAvg >= competitionAvg) {
         category = 'customer';
