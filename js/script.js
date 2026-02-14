@@ -228,10 +228,11 @@ function hapusSatuCatatan(type, index) {
 
 function hapusSemuaCatatan(type) {
     if (appData[type].notes.length === 0) return;
-    if (!confirm('Hapus semua catatan untuk kategori ini?')) return;
-    appData[type].notes = [];
-    saveData();
-    renderNotesList(type);
+    showConfirm('Hapus semua catatan untuk kategori ini?', 'warning', function() {
+        appData[type].notes = [];
+        saveData();
+        renderNotesList(type);
+    });
 }
 
 function renderNotesList(type) {

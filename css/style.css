@@ -99,6 +99,30 @@
     transform: scale(0.97);
 }
 
+.custom-confirm-buttons {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+.custom-confirm-buttons .cancel-btn {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.custom-confirm-buttons .cancel-btn:hover {
+    background: #d1d5db;
+}
+
+.custom-confirm-buttons .confirm-btn {
+    background: #ef4444;
+    color: #fff;
+}
+
+.custom-confirm-buttons .confirm-btn:hover {
+    background: #dc2626;
+}
+
 @keyframes customAlertFadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
