@@ -447,7 +447,7 @@ function goToIdeasPage() {
     
     localStorage.setItem('winningCategory', category);
     
-    window.location.href = 'ideas.html?category=' + category;
+    window.location.href = 'pages/ideas.html?category=' + category;
 }
 
 window.onload = function() {
