@@ -182,26 +182,16 @@
                 </div>
 
                 <div style="margin-top: 2rem; margin-bottom: 3rem;">
-                    <h3><svg class="icon-inline" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Preview Idea & Ruangan</h3>
+                    <h3><svg class="icon-inline" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Preview Idea & Ruangan - ${categoryConfig.name}</h3>
+                    <div style="background: #f9fafb; border-radius: 1rem; padding: 1.5rem; border: 1px solid #e5e7eb;">
             `;
 
-            const allCategories = ['internal', 'customer', 'competition'];
-            allCategories.forEach(cat => {
-                const catConfig = CATEGORY_DATA[cat];
-                const catIdeas = ideasData[cat] || {};
-
-                html += `
-                    <div style="margin-bottom: 1.5rem;">
-                        <h4 style="margin-bottom: 0.75rem; font-size: 1rem; color: #1f2937;">${catConfig.name}</h4>
-                        <div style="background: #f9fafb; border-radius: 1rem; padding: 1.5rem; border: 1px solid #e5e7eb;">
-                `;
-
-                catConfig.items.forEach(item => {
-                    const ideaKey = `idea_${item.ideaNum}`;
-                    const roomKey = `room_${item.roomNum}`;
-                    const ideaInputs = catIdeas[ideaKey] || [];
-                    const roomInputs = catIdeas[roomKey] || [];
-                    const filledIdeas = ideaInputs.filter(i => i && i.trim());
+            categoryConfig.items.forEach(item => {
+                const ideaKey = `idea_${item.ideaNum}`;
+                const roomKey = `room_${item.roomNum}`;
+                const ideaInputs = categoryIdeas[ideaKey] || [];
+                const roomInputs = categoryIdeas[roomKey] || [];
+                const filledIdeas = ideaInputs.filter(i => i && i.trim());
 
                 html += `
                     <div style="margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid #d1d5db;">
@@ -230,15 +220,10 @@
                         </div>
                     </div>
                 `;
-                });
-
-                html += `
-                        </div>
-                    </div>
-                `;
             });
 
             html += `
+                    </div>
                 </div>
             `;
 
@@ -306,22 +291,15 @@
                     </div>
 
                     <div style="margin-bottom: 8px;">
-                        <h3 style="margin-bottom: 4px; font-size: 12px;">Rincian Idea & Ruangan</h3>
+                        <h3 style="margin-bottom: 4px; font-size: 12px;">Rincian Idea & Ruangan - ${categoryConfig.name}</h3>
             `;
 
-            const pdfCategories = ['internal', 'customer', 'competition'];
-            pdfCategories.forEach(cat => {
-                const pdfCatConfig = CATEGORY_DATA[cat];
-                const pdfCatIdeas = ideasData[cat] || {};
-
-                html += `<div style="margin-bottom: 6px;"><div style="font-weight: 700; font-size: 10px; margin-bottom: 3px; color: #1e40af;">${pdfCatConfig.name}</div>`;
-
-                pdfCatConfig.items.forEach(item => {
-                    const ideaKey = `idea_${item.ideaNum}`;
-                    const roomKey = `room_${item.roomNum}`;
-                    const ideaInputs = pdfCatIdeas[ideaKey] || [];
-                    const roomInputs = pdfCatIdeas[roomKey] || [];
-                    const filledIdeas = ideaInputs.filter(i => i && i.trim());
+            categoryConfig.items.forEach(item => {
+                const ideaKey = `idea_${item.ideaNum}`;
+                const roomKey = `room_${item.roomNum}`;
+                const ideaInputs = categoryIdeas[ideaKey] || [];
+                const roomInputs = categoryIdeas[roomKey] || [];
+                const filledIdeas = ideaInputs.filter(i => i && i.trim());
 
                 html += `
                     <div style="margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid #e5e7eb;">
@@ -343,9 +321,6 @@
                 } else {
                     html += `<div style="color: #9ca3af; font-style: italic; font-size: 9px;">Belum ada idea yang diisi</div>`;
                 }
-
-                html += `</div>`;
-            });
 
                 html += `</div>`;
             });
