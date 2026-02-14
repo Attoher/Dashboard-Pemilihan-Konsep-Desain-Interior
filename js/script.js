@@ -337,7 +337,7 @@ function showCategoryDescription(category) {
                 <li>Ide role/responsibilities (staff) dengan tugas baru</li>
                 <li>Ide tools/technologies (peralatan) baru</li>
             </ul>
-            Setiap ide akan ditempatkan di ruangan/lokasi yang sesuai (Ruangan 5-8).`;
+            Setiap ide akan ditempatkan di ruangan/lokasi yang sesuai.`;
     } else if (category === 'customer') {
         description = `<strong><svg class="icon-inline" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Customer & Experience:</strong><br>
             Fokus pada pengalaman pelanggan untuk mendorong revenue dan loyalitas. Kategori ini mencakup:<br>
@@ -346,7 +346,7 @@ function showCategoryDescription(category) {
                 <li>Ide mewujudkan "gains" (harapan pelanggan)</li>
                 <li>Ide keadaan (konteks) penting yang dihadapi pelanggan</li>
             </ul>
-            Setiap ide akan ditempatkan di ruangan/lokasi yang sesuai (Ruangan 4-6).`;
+            Setiap ide akan ditempatkan di ruangan/lokasi yang sesuai.`;
     } else if (category === 'competition') {
         description = `<strong><svg class="icon-inline" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Strategi Persaingan:</strong><br>
             Fokus pada diferensiasi dan positioning untuk meningkatkan revenue di pasar kompetitif. Kategori ini mencakup:<br>
@@ -358,7 +358,7 @@ function showCategoryDescription(category) {
                 <li>Idea Unique Selling Propositions (USP) atau Value Propositions</li>
                 <li>Idea event atau aktivitas baru</li>
             </ul>
-            Setiap ide akan ditempatkan di ruangan/lokasi yang sesuai (Ruangan 7-12).`;
+            Setiap ide akan ditempatkan di ruangan/lokasi yang sesuai.`;
     }
     
     document.getElementById('categoryDescription').innerHTML = description;
