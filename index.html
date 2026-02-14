@@ -9,13 +9,13 @@
 </head>
 <body>
 <div class="container">
-    <h1>Dashboard Pemilihan Konsep Desain Interior</h1>
+    <h1><svg class="icon-inline icon-title" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> Dashboard Pemilihan Konsep Desain Interior</h1>
     <p class="subtitle">Bagian 1: Isian Skor Maksimal 7 Mahasiswa per Kategori (Data Tersimpan Otomatis)</p>
 
     <!-- INPUT MAHASISWA DAN JUDUL TUGAS -->
     <div style="background: #f0f9ff; border: 2px solid #3b82f6; border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem;">
-        <h2 style="font-size: 1.25rem; margin-bottom: 1rem; color: #1e40af;">Identitas Pengerjaan</h2>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+        <h2 style="font-size: 1.25rem; margin-bottom: 1rem; color: #1e40af; display: flex; align-items: center; gap: 0.5rem;"><svg class="icon-inline" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Identitas Pengerjaan</h2>
+        <div class="identitas-grid">
             <div>
                 <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1f2937;">Nama Mahasiswa</label>
                 <input id="namaMahasiswa" type="text" placeholder="Masukkan nama mahasiswa" 
@@ -33,85 +33,85 @@
 
     <!-- PETUNJUK PENGISIAN -->
     <div class="instructions">
-        <h2>Petunjuk Pengisian</h2>
+        <h2><svg class="icon-inline" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Petunjuk Pengisian</h2>
         <p>Pelajari minimal 5 sumber pustaka baik dari web official ternama maupun dari hasil penelitian secara ilmiah sesuai obyek desain interior yang akan didesain. Setelah itu simpulkan dari analisa terhadap 5 sumber ilmiah tersebut berapa skor nilai antara 1 sampai 100 dari masing-masing kategori isian yang ada. Terdapat 3 kategori yang harus dinilai, yakni Kinerja Internal, Customer, dan Persaingan. Isilah skornya berdasarkan seberapa penting masing-masing kategori menurut anda dapat menghasilkan revenue (pemasukan pendapatan) bagi obyek yang didesain.</p>
     </div>
 
     <div class="category-grid">
         <!-- KATEGORI 1: Kinerja Internal -->
         <div class="category-card blue">
-            <h2>Kategori 1: Kinerja Internal</h2>
+            <h2><svg class="icon-inline" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg> Kategori 1: Kinerja Internal</h2>
             <p class="category-range">Nilai: 1-100</p>
             <div id="internalInputs" class="inputs-container"></div>
             <div class="button-group">
-                <button onclick="addMahasiswa('internal')" class="btn blue-bg">Tambah Mahasiswa</button>
-                <button onclick="hapusMahasiswa('internal')" class="btn gray-bg">Kurangi Mahasiswa</button>
+                <button onclick="addMahasiswa('internal')" class="btn blue-bg"><svg class="icon-btn" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Tambah Mahasiswa</button>
+                <button onclick="hapusMahasiswa('internal')" class="btn gray-bg"><svg class="icon-btn" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg> Kurangi Mahasiswa</button>
             </div>
             <div class="average">Rata-rata: <span id="internalAvg">0</span></div>
 
             <hr>
 
-            <h3>Kata Kunci & Catatan Penting (maks 30 kata)</h3>
-            <input id="internalKeyword" type="text" placeholder="Kata kunci utama">
-            <textarea id="internalNote" placeholder="Catatan penting (maks 30 kata)"></textarea>
+            <h3><svg class="icon-inline" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg> Daftar Catatan Penting (maks 20)</h3>
+            <textarea id="internalNoteInput" placeholder="Tulis catatan baru (maks 30 kata per catatan)"></textarea>
             <div class="button-group">
-                <button onclick="simpanCatatan('internal')" class="btn blue-bg">Simpan Catatan</button>
-                <button onclick="hapusCatatan('internal')" class="btn gray-bg">Hapus Catatan</button>
+                <button onclick="tambahCatatan('internal')" class="btn blue-bg"><svg class="icon-btn" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Tambah Catatan</button>
+                <button onclick="hapusSemuaCatatan('internal')" class="btn gray-bg"><svg class="icon-btn" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Hapus Semua</button>
             </div>
-            <div id="internalSaved" class="saved-note hidden"></div>
+            <div id="internalNotesCounter" class="notes-counter">0 / 20 catatan</div>
+            <div id="internalNotesList" class="notes-list-container"></div>
         </div>
 
         <!-- KATEGORI 2: Customer & Experience -->
         <div class="category-card green">
-            <h2>Kategori 2: Customer & Experience</h2>
+            <h2><svg class="icon-inline" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Kategori 2: Customer & Experience</h2>
             <p class="category-range">Nilai: 1-100</p>
             <div id="customerInputs" class="inputs-container"></div>
             <div class="button-group">
-                <button onclick="addMahasiswa('customer')" class="btn green-bg">Tambah Mahasiswa</button>
-                <button onclick="hapusMahasiswa('customer')" class="btn gray-bg">Kurangi Mahasiswa</button>
+                <button onclick="addMahasiswa('customer')" class="btn green-bg"><svg class="icon-btn" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Tambah Mahasiswa</button>
+                <button onclick="hapusMahasiswa('customer')" class="btn gray-bg"><svg class="icon-btn" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg> Kurangi Mahasiswa</button>
             </div>
             <div class="average">Rata-rata: <span id="customerAvg">0</span></div>
 
             <hr>
 
-            <h3>Kata Kunci & Catatan Penting (maks 30 kata)</h3>
-            <input id="customerKeyword" type="text" placeholder="Kata kunci utama">
-            <textarea id="customerNote" placeholder="Catatan penting (maks 30 kata)"></textarea>
+            <h3><svg class="icon-inline" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg> Daftar Catatan Penting (maks 20)</h3>
+            <textarea id="customerNoteInput" placeholder="Tulis catatan baru (maks 30 kata per catatan)"></textarea>
             <div class="button-group">
-                <button onclick="simpanCatatan('customer')" class="btn green-bg">Simpan Catatan</button>
-                <button onclick="hapusCatatan('customer')" class="btn gray-bg">Hapus Catatan</button>
+                <button onclick="tambahCatatan('customer')" class="btn green-bg"><svg class="icon-btn" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Tambah Catatan</button>
+                <button onclick="hapusSemuaCatatan('customer')" class="btn gray-bg"><svg class="icon-btn" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Hapus Semua</button>
             </div>
-            <div id="customerSaved" class="saved-note hidden"></div>
+            <div id="customerNotesCounter" class="notes-counter">0 / 20 catatan</div>
+            <div id="customerNotesList" class="notes-list-container"></div>
         </div>
 
         <!-- KATEGORI 3: Persaingan -->
         <div class="category-card red">
-            <h2>Kategori 3: Persaingan</h2>
+            <h2><svg class="icon-inline" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Kategori 3: Persaingan</h2>
             <p class="category-range">Nilai: 1-100</p>
             <div id="competitionInputs" class="inputs-container"></div>
             <div class="button-group">
-                <button onclick="addMahasiswa('competition')" class="btn red-bg">Tambah Mahasiswa</button>
-                <button onclick="hapusMahasiswa('competition')" class="btn gray-bg">Kurangi Mahasiswa</button>
+                <button onclick="addMahasiswa('competition')" class="btn red-bg"><svg class="icon-btn" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Tambah Mahasiswa</button>
+                <button onclick="hapusMahasiswa('competition')" class="btn gray-bg"><svg class="icon-btn" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg> Kurangi Mahasiswa</button>
             </div>
             <div class="average">Rata-rata: <span id="competitionAvg">0</span></div>
 
             <hr>
 
-            <h3>Kata Kunci & Catatan Penting (maks 30 kata)</h3>
-            <input id="competitionKeyword" type="text" placeholder="Kata kunci utama">
-            <textarea id="competitionNote" placeholder="Catatan penting (maks 30 kata)"></textarea>
+            <h3><svg class="icon-inline" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg> Daftar Catatan Penting (maks 20)</h3>
+            <textarea id="competitionNoteInput" placeholder="Tulis catatan baru (maks 30 kata per catatan)"></textarea>
             <div class="button-group">
-                <button onclick="simpanCatatan('competition')" class="btn red-bg">Simpan Catatan</button>
-                <button onclick="hapusCatatan('competition')" class="btn gray-bg">Hapus Catatan</button>
+                <button onclick="tambahCatatan('competition')" class="btn red-bg"><svg class="icon-btn" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Tambah Catatan</button>
+                <button onclick="hapusSemuaCatatan('competition')" class="btn gray-bg"><svg class="icon-btn" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Hapus Semua</button>
             </div>
-            <div id="competitionSaved" class="saved-note hidden"></div>
+            <div id="competitionNotesCounter" class="notes-counter">0 / 20 catatan</div>
+            <div id="competitionNotesList" class="notes-list-container"></div>
         </div>
     </div>
 
     <!-- PROSES -->
     <div class="process-section">
-        <h2>Proses Pemilihan Konsep</h2>
-        <button onclick="processSelection()" class="btn process-btn">Proses</button>
+        <h2><svg class="icon-inline" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg> Proses Pemilihan Konsep</h2>
+        <button onclick="processSelection()" class="btn process-btn"><svg class="icon-btn" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg> Proses</button>
         <div class="result-display">Hasil Pilihan: <span id="resultChoice">Belum diproses</span></div>
     </div>
 
@@ -119,30 +119,23 @@
         <div id="resultModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Kategori Terpilih</h3>
+                <h3><svg class="icon-inline" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Kategori Terpilih</h3>
                 <button onclick="closeModal()" class="close-btn">&times;</button>
             </div>
             <div id="modalResultText" class="modal-result"></div>
 
             <!-- Diagram Perbandingan -->
             <div style="margin: 1.5rem 0; text-align: center;">
-                <h4 style="margin-bottom: 1rem;">Perbandingan Rata-rata Skor</h4>
+                <h4 style="margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;"><svg class="icon-inline" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Perbandingan Rata-rata Skor</h4>
                 <canvas id="chartCanvas" width="400" height="200" style="max-width: 100%;"></canvas>
             </div>
 
             <!-- Deskripsi Kategori -->
             <div id="categoryDescription" style="background: #f3f4f6; padding: 1rem; border-radius: 0.75rem; margin-bottom: 1.5rem; font-size: 0.9rem; line-height: 1.6;"></div>
 
-            <!-- Tombol detail per kategori -->
-            <div class="modal-button-group">
-                <button onclick="showCategoryDetail('internal')" class="btn blue-bg">Detail Kinerja Internal</button>
-                <button onclick="showCategoryDetail('customer')" class="btn green-bg">Detail Customer</button>
-                <button onclick="showCategoryDetail('competition')" class="btn red-bg">Detail Persaingan</button>
-            </div>
-
             <!-- Tombol lanjut ke ideas page -->
             <div class="modal-footer">
-                <button onclick="goToIdeasPage()" class="btn ideas-btn">Lanjut ke Ide Penting</button>
+                <button onclick="goToIdeasPage()" class="btn ideas-btn"><svg class="icon-btn" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg> Lanjut ke Ideas</button>
             </div>
         </div>
     </div>
@@ -151,7 +144,7 @@
     <div id="detailModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="detailModalTitle">Detail Kategori</h3>
+                <h3 id="detailModalTitle"><svg class="icon-inline" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Detail Kategori</h3>
                 <button onclick="closeDetailModal()" class="close-btn">&times;</button>
             </div>
             <div id="detailModalBody" class="detail-modal-body">

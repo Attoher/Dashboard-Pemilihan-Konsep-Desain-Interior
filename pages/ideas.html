@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="../assets/Logo.png">
     <link rel="stylesheet" href="../css/style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -21,30 +20,26 @@
                 </div>
                 <p id="categoryLabel" class="subtitle" style="margin-bottom: 0;">Kategori: Kinerja Internal</p>
             </div>
-            <button onclick="window.location.href='../index.html'" class="btn back-btn">Kembali ke Dashboard</button>
         </div>
 
-        <div class="ideas-main-layout">
-            <!-- LEFT: Ideas Column -->
-            <div class="ideas-left">
-                <div id="ideasContent">
-                    <!-- Dynamically populated -->
-                </div>
-            </div>
+        <!-- WORKFLOW PROGRESS BAR -->
+        <div id="workflowProgress" class="workflow-progress"></div>
 
-            <!-- RIGHT: Rooms Column -->
-            <div class="ideas-right">
-                <h2 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1.5rem; color: #1f2937;">Ruangan / Tempat Idea Penting</h2>
-                <div id="roomsGrid" class="rooms-grid">
-                    <!-- Dynamically populated with rooms -->
-                </div>
-                <p id="noRoomsMsg" class="no-rooms" style="display: none;">Tambahkan idea terlebih dahulu untuk menentukan ruangan yang dibutuhkan</p>
-            </div>
+        <!-- WORKFLOW STEPS (ide + ruangan sejajar) -->
+        <div id="workflowSteps" class="workflow-steps">
+            <!-- Dynamically populated -->
+        </div>
+
+        <!-- FINISH BANNER -->
+        <div id="finishBanner" class="finish-banner" style="display: none;">
+            <div class="finish-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <h2>Semua Ide Selesai Diisi!</h2>
+            <p>Anda telah melengkapi seluruh ide untuk kategori ini. Silakan lihat hasil.</p>
         </div>
 
         <div class="ideas-footer">
-            <button onclick="exportData()" class="btn export-btn">Export PDF</button>
-            <button onclick="goToResultPage()" class="btn result-page-btn">Lihat Hasil</button>
+            <button onclick="window.location.href='../index.html'" class="btn gray-bg"><svg class="icon-btn" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Kembali ke Dashboard</button>
+            <button onclick="goToResultPage()" class="btn result-page-btn"><svg class="icon-btn" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg> Lihat Hasil</button>
         </div>
     </div>
 

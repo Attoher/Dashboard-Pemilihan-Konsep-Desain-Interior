@@ -1,5 +1,6 @@
 const maxMahasiswa = 7;
 const maxWords = 30;
+const maxNotes = 20;
 
 const IDEAS_DATA = {
     internal: {
@@ -33,9 +34,9 @@ const IDEAS_DATA = {
 };
 
 let appData = {
-    internal: { inputs: [], keyword: '', note: '' },
-    customer: { inputs: [], keyword: '', note: '' },
-    competition: { inputs: [], keyword: '', note: '' }
+    internal: { inputs: [], notes: [] },
+    customer: { inputs: [], notes: [] },
+    competition: { inputs: [], notes: [] }
 };
 
 function loadData() {
@@ -43,6 +44,23 @@ function loadData() {
     if (saved) {
         try {
             appData = JSON.parse(saved);
+            // Migrate old formats
+            ['internal', 'customer', 'competition'].forEach(type => {
+                // Migrate old single-note to notes array
+                if (!Array.isArray(appData[type].notes)) {
+                    if (appData[type].note && typeof appData[type].note === 'string') {
+                        appData[type].notes = [appData[type].note];
+                    } else {
+                        appData[type].notes = [];
+                    }
+                    delete appData[type].note;
+                }
+                // Remove legacy keyword field
+                if ('keyword' in appData[type]) {
+                    delete appData[type].keyword;
+                }
+                saveData();
+            });
         } catch (e) {
             console.error('Gagal memuat data', e);
         }
@@ -84,9 +102,9 @@ function renderAll() {
     renderCategory('internal');
     renderCategory('customer');
     renderCategory('competition');
-    showSavedNote('internal');
-    showSavedNote('customer');
-    showSavedNote('competition');
+    renderNotesList('internal');
+    renderNotesList('customer');
+    renderNotesList('competition');
     calculateAverages();
 }
 
@@ -97,8 +115,7 @@ function renderCategory(type) {
     for (let i = 0; i < data.length; i++) {
         addInputRow(type, i, data[i]);
     }
-    document.getElementById(type + 'Keyword').value = appData[type].keyword || '';
-    document.getElementById(type + 'Note').value = appData[type].note || '';
+    document.getElementById(type + 'NoteInput').value = '';
 }
 
 function addInputRow(type, index, value) {
@@ -178,45 +195,74 @@ function countWords(text) {
     return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
-function simpanCatatan(type) {
-    const keyword = document.getElementById(type + 'Keyword').value.trim();
-    const note = document.getElementById(type + 'Note').value.trim();
-
-    if (countWords(note) > maxWords) {
-        alert('Catatan maksimal 30 kata.');
-        return;
-    }
+function tambahCatatan(type) {
+    const input = document.getElementById(type + 'NoteInput');
+    const note = input.value.trim();
 
     if (note === '') {
         alert('Catatan tidak boleh kosong.');
         return;
     }
 
-    appData[type].keyword = keyword;
-    appData[type].note = note;
-    saveData();
-    showSavedNote(type);
-}
-
-function hapusCatatan(type) {
-    appData[type].keyword = '';
-    appData[type].note = '';
-    document.getElementById(type + 'Keyword').value = '';
-    document.getElementById(type + 'Note').value = '';
-    saveData();
-    showSavedNote(type);
-}
-
-function showSavedNote(type) {
-    const display = document.getElementById(type + 'Saved');
-    const keyword = appData[type].keyword;
-    const note = appData[type].note;
-    if (note) {
-        display.innerHTML = '<strong>' + (keyword || '') + '</strong><br>' + note;
-        display.classList.remove('hidden');
-    } else {
-        display.classList.add('hidden');
+    if (countWords(note) > maxWords) {
+        alert('Catatan maksimal 30 kata per catatan.');
+        return;
     }
+
+    if (appData[type].notes.length >= maxNotes) {
+        alert('Maksimal 20 catatan per kategori.');
+        return;
+    }
+
+    appData[type].notes.push(note);
+    input.value = '';
+    saveData();
+    renderNotesList(type);
+}
+
+function hapusSatuCatatan(type, index) {
+    appData[type].notes.splice(index, 1);
+    saveData();
+    renderNotesList(type);
+}
+
+function hapusSemuaCatatan(type) {
+    if (appData[type].notes.length === 0) return;
+    if (!confirm('Hapus semua catatan untuk kategori ini?')) return;
+    appData[type].notes = [];
+    saveData();
+    renderNotesList(type);
+}
+
+function renderNotesList(type) {
+    const container = document.getElementById(type + 'NotesList');
+    const counter = document.getElementById(type + 'NotesCounter');
+    const notes = appData[type].notes || [];
+
+    counter.textContent = notes.length + ' / 20 catatan';
+
+    if (notes.length === 0) {
+        container.innerHTML = '<div class="notes-empty"><em>Belum ada catatan</em></div>';
+        return;
+    }
+
+    let html = '';
+    notes.forEach((note, idx) => {
+        html += `<div class="note-item">
+            <span class="note-num">${idx + 1}.</span>
+            <span class="note-text">${escapeHtml(note)}</span>
+            <button onclick="hapusSatuCatatan('${type}', ${idx})" class="note-delete-btn" title="Hapus catatan">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>`;
+    });
+    container.innerHTML = html;
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 function processSelection() {
@@ -283,7 +329,7 @@ function showCategoryDescription(category) {
     let description = '';
     
     if (category === 'internal') {
-        description = `<strong>Kinerja Internal:</strong><br>
+        description = `<strong><svg class="icon-inline" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg> Kinerja Internal:</strong><br>
             Fokus pada optimalisasi internal untuk meningkatkan revenue. Kategori ini mencakup:<br>
             <ul style="margin: 0.5rem 0 0 1.5rem;">
                 <li>Ide aktivitas/kegiatan penting yang baru</li>
@@ -293,7 +339,7 @@ function showCategoryDescription(category) {
             </ul>
             Setiap ide akan ditempatkan di ruangan/lokasi yang sesuai (Ruangan 5-8).`;
     } else if (category === 'customer') {
-        description = `<strong>Customer & Experience:</strong><br>
+        description = `<strong><svg class="icon-inline" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Customer & Experience:</strong><br>
             Fokus pada pengalaman pelanggan untuk mendorong revenue dan loyalitas. Kategori ini mencakup:<br>
             <ul style="margin: 0.5rem 0 0 1.5rem;">
                 <li>Ide mengatasi "pains" (yang tidak diinginkan)</li>
@@ -302,7 +348,7 @@ function showCategoryDescription(category) {
             </ul>
             Setiap ide akan ditempatkan di ruangan/lokasi yang sesuai (Ruangan 4-6).`;
     } else if (category === 'competition') {
-        description = `<strong>Strategi Persaingan:</strong><br>
+        description = `<strong><svg class="icon-inline" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Strategi Persaingan:</strong><br>
             Fokus pada diferensiasi dan positioning untuk meningkatkan revenue di pasar kompetitif. Kategori ini mencakup:<br>
             <ul style="margin: 0.5rem 0 0 1.5rem;">
                 <li>Ide strategi sebagai market leader</li>
@@ -366,11 +412,17 @@ function showCategoryDetail(type) {
         'competition': 'Persaingan'
     };
     
-    document.getElementById('detailModalTitle').textContent = 'Detail ' + categoryNames[type];
+    const categoryIcons = {
+        'internal': '<svg class="icon-inline" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>',
+        'customer': '<svg class="icon-inline" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>',
+        'competition': '<svg class="icon-inline" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>'
+    };
+    
+    document.getElementById('detailModalTitle').innerHTML = categoryIcons[type] + ' Detail ' + categoryNames[type];
     
     let html = `
         <div class="detail-section">
-            <h4>Ide untuk Kategori Ini</h4>
+            <h4><svg class="icon-inline" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg> Ide untuk Kategori Ini</h4>
             <ul class="ideas-list">
     `;
     
@@ -387,20 +439,29 @@ function showCategoryDetail(type) {
             </ul>
         </div>
         <div class="detail-section">
-            <h4>Kata Kunci</h4>
-            <p>${data.keyword || '<em>-</em>'}</p>
+            <h4><svg class="icon-inline" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Daftar Catatan Penting (${(data.notes || []).length})</h4>
+    `;
+    
+    const notes = data.notes || [];
+    if (notes.length > 0) {
+        html += '<div class="values-list">';
+        notes.forEach((note, idx) => {
+            html += `<div class="value-item"><strong>${idx + 1}.</strong> ${escapeHtml(note)}</div>`;
+        });
+        html += '</div>';
+    } else {
+        html += '<p><em>Belum ada catatan</em></p>';
+    }
+    
+    html += `
         </div>
         <div class="detail-section">
-            <h4>Catatan</h4>
-            <p>${data.note || '<em>-</em>'}</p>
-        </div>
-        <div class="detail-section">
-            <h4>Nilai Mahasiswa</h4>
+            <h4><svg class="icon-inline" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Nilai Mahasiswa</h4>
             <div class="values-list">
     `;
     
     data.inputs.forEach((val, idx) => {
-        html += `<div class="value-item"><strong>Mahasiswa ${idx+1}:</strong> ${val || '<em>belum diisi</em>'}</div>`;
+        html += `<div class="value-item"><svg class="icon-inline" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> <strong>Mahasiswa ${idx+1}:</strong> ${val || '<em>belum diisi</em>'}</div>`;
     });
     
     html += `
