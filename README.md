@@ -73,3 +73,12 @@ Dashboard-Pemilihan-Konsep-Desain-Interior/
 Aplikasi ini di-deploy menggunakan Vercel dan source code tersedia di GitHub.
 
 - Repository: https://github.com/Attoher/Dashboard-Pemilihan-Konsep-Desain-Interior.git
+
+
+## Update Terbaru
+
+- **Label Ruangan diperbarui** - Kolom "Ruangan" di halaman Ideas sekarang menjadi "Ruangan / Tempat Diletaknya Ide" agar lebih jelas.
+- **Gambar Arah Konsep** - Ditambahkan gambar panduan arah konsep di atas progress bar halaman Ideas, otomatis sesuai kategori (Kinerja Internal, Customer, Competition).
+- **Diagram chart diperbaiki** - Semua chart (Dashboard & Result) diganti dari canvas ke HTML div-based bar chart agar tampil konsisten di semua browser.
+- **PDF Export ditingkatkan** - PDF hasil sekarang mencakup prioritas & deskripsi, rata-rata & catatan per kategori, diagram perbandingan, serta preview idea & ruangan.
+- **Icon Idea di Result** - Icon pada baris "Idea" di preview Result diganti menjadi icon lampu biru (lightbulb), sama seperti di halaman Ideas.
