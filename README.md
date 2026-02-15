@@ -1,6 +1,6 @@
 # Dashboard Pemilihan Konsep Desain Interior
 
-<img width="1919" height="992" alt="image" src="https://github.com/user-attachments/assets/993a80e7-cc0a-4ab6-888d-aa7a02b8ccad" />
+<img width="1919" height="993" alt="image" src="https://github.com/user-attachments/assets/2a84401b-4c38-4d34-860c-b4a9deeb269e" />
 
 Aplikasi web dashboard untuk evaluasi dan pemilihan konsep desain interior berdasarkan Diagram Rating Kinerja. Dashboard ini digunakan untuk menilai dan membandingkan konsep desain dari tiga kategori penilaian, mengumpulkan ide-ide penting, serta menghasilkan laporan hasil dalam format PDF.
 
