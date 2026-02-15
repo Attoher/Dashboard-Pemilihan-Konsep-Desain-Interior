@@ -11,9 +11,9 @@ Aplikasi ini merupakan tools bantu untuk proses pemilihan konsep desain interior
 
 1. **Dashboard Penilaian** - Halaman utama untuk mengisi skor penilaian pada tiga kategori: Kinerja Internal, Customer, dan Persaingan. Setiap kategori memiliki beberapa kriteria yang dinilai dengan skala tertentu.
 
-2. **Halaman Ide Penting** - Halaman untuk mengumpulkan dan mengelola ide-ide penting dari setiap kategori, termasuk penugasan ruangan untuk setiap ide.
+2. **Halaman Ide Penting** - Halaman untuk mengumpulkan dan mengelola ide-ide penting dari setiap kategori, termasuk penugasan ruangan/tempat diletaknya ide. Dilengkapi gambar panduan arah konsep sesuai kategori.
 
-3. **Halaman Hasil** - Menampilkan ringkasan hasil penilaian lengkap dengan rata-rata skor per kategori, kategori pemenang, dan opsi ekspor ke PDF.
+3. **Halaman Hasil** - Menampilkan ringkasan hasil penilaian lengkap dengan prioritas & deskripsi, rata-rata skor & catatan per kategori, diagram perbandingan, preview idea & ruangan, serta opsi ekspor ke PDF.
 
 
 ## Teknologi yang Digunakan
@@ -34,6 +34,9 @@ Dashboard-Pemilihan-Konsep-Desain-Interior/
   assets/
     Interior.png           Gambar header halaman hasil
     Logo.png               Logo aplikasi
+    Kinerja Internal - Arah Konsep.png   Gambar arah konsep Kinerja Internal
+    Customer - Arah Konsep.png           Gambar arah konsep Customer
+    Competition - Arah Konsep.png        Gambar arah konsep Persaingan
   css/
     style.css              Seluruh styling aplikasi
   js/
@@ -49,10 +52,11 @@ Dashboard-Pemilihan-Konsep-Desain-Interior/
 
 - Penilaian konsep desain dengan tiga kategori (Kinerja Internal, Customer, Persaingan)
 - Input identitas mahasiswa dan judul tugas studio
-- Visualisasi chart skor per kategori
+- Visualisasi diagram perbandingan skor per kategori (HTML-based bar chart)
 - Penentuan kategori pemenang berdasarkan rata-rata skor tertinggi
-- Pengumpulan ide penting per kategori dengan penugasan ruangan
-- Ekspor data ide dan hasil penilaian ke format PDF
+- Pengumpulan ide penting per kategori dengan penugasan ruangan/tempat diletaknya ide
+- Gambar panduan arah konsep otomatis sesuai kategori terpilih
+- Ekspor data ide dan hasil penilaian ke format PDF (mencakup prioritas, catatan, diagram, dan preview idea)
 - Penyimpanan data otomatis menggunakan localStorage
 - Tampilan responsif untuk desktop dan perangkat mobile
 
@@ -73,12 +77,3 @@ Dashboard-Pemilihan-Konsep-Desain-Interior/
 Aplikasi ini di-deploy menggunakan Vercel dan source code tersedia di GitHub.
 
 - Repository: https://github.com/Attoher/Dashboard-Pemilihan-Konsep-Desain-Interior.git
-
-
-## Update Terbaru
-
-- **Label Ruangan diperbarui** - Kolom "Ruangan" di halaman Ideas sekarang menjadi "Ruangan / Tempat Diletaknya Ide" agar lebih jelas.
-- **Gambar Arah Konsep** - Ditambahkan gambar panduan arah konsep di atas progress bar halaman Ideas, otomatis sesuai kategori (Kinerja Internal, Customer, Competition).
-- **Diagram chart diperbaiki** - Semua chart (Dashboard & Result) diganti dari canvas ke HTML div-based bar chart agar tampil konsisten di semua browser.
-- **PDF Export ditingkatkan** - PDF hasil sekarang mencakup prioritas & deskripsi, rata-rata & catatan per kategori, diagram perbandingan, serta preview idea & ruangan.
-- **Icon Idea di Result** - Icon pada baris "Idea" di preview Result diganti menjadi icon lampu biru (lightbulb), sama seperti di halaman Ideas.
