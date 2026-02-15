@@ -299,31 +299,31 @@ function processSelection() {
 }
 
 function drawChart(i, c, comp) {
-    const canvas = document.getElementById('chartCanvas');
-    const ctx = canvas.getContext('2d');
-    const width = canvas.width;
-    const height = canvas.height;
+    const container = document.getElementById('chartContainer');
+    if (!container) return;
 
-    ctx.clearRect(0, 0, width, height);
+    const maxVal = Math.max(i, c, comp, 1);
+    const maxBarHeight = 150;
 
-    const barWidth = 80;
-    const spacing = 40;
-    const baseX = 50;
-    const maxVal = Math.max(i, c, comp, 100);
+    const categories = [
+        { value: i, color: '#3b82f6', label: 'Internal' },
+        { value: c, color: '#22c55e', label: 'Customer' },
+        { value: comp, color: '#ef4444', label: 'Persaingan' }
+    ];
 
-    function drawBar(x, value, color, label) {
-        const barHeight = (value / maxVal) * (height - 80);
-        ctx.fillStyle = color;
-        ctx.fillRect(x, height - 40 - barHeight, barWidth, barHeight);
-        ctx.fillStyle = '#333';
-        ctx.font = '12px Arial, sans-serif';
-        ctx.fillText(label, x + 10, height - 20);
-        ctx.fillText(value, x + 10, height - 45 - barHeight);
-    }
+    let html = '';
+    categories.forEach(cat => {
+        const barH = maxVal > 0 ? Math.max((cat.value / maxVal) * maxBarHeight, 4) : 4;
+        html += `
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.4rem; flex: 1; max-width: 120px;">
+                <div style="font-weight: 700; font-size: 0.95rem; color: ${cat.color};">${typeof cat.value === 'number' ? cat.value.toFixed(2) : cat.value}</div>
+                <div style="width: 100%; height: ${barH}px; background: ${cat.color}; border-radius: 6px 6px 0 0; transition: height 0.5s ease;"></div>
+                <div style="font-size: 0.75rem; color: #6b7280; text-align: center; font-weight: 500;">${cat.label}</div>
+            </div>
+        `;
+    });
 
-    drawBar(baseX, i, 'rgba(59, 130, 246, 0.8)', 'Internal');
-    drawBar(baseX + barWidth + spacing, c, 'rgba(34, 197, 94, 0.8)', 'Customer');
-    drawBar(baseX + 2*(barWidth + spacing), comp, 'rgba(239, 68, 68, 0.8)', 'Persaingan');
+    container.innerHTML = html;
 }
 
 function showCategoryDescription(category) {

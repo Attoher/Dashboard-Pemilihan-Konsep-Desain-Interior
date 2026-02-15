@@ -102,6 +102,25 @@ function renderContent() {
     
     document.getElementById('categoryLabel').textContent = `Kategori: ${categoryData.name}`;
     
+    // Render concept direction image
+    const conceptImgMap = {
+        internal: '../assets/Kinerja Internal - Arah Konsep.png',
+        customer: '../assets/Customer - Arah Konsep.png',
+        competition: '../assets/Competition - Arah Konsep.png'
+    };
+    const conceptContainer = document.getElementById('conceptDirectionContainer');
+    if (conceptContainer && conceptImgMap[currentCategory]) {
+        conceptContainer.innerHTML = `
+            <div style="text-align: center; margin-bottom: 1.5rem; background: #f9fafb; padding: 1.5rem; border-radius: 1rem; border: 1px solid #e5e7eb;">
+                <h3 style="margin-bottom: 0.75rem; font-size: 1.1rem; color: #1f2937; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                    Arah Konsep - ${categoryData.name}
+                </h3>
+                <img src="${conceptImgMap[currentCategory]}" alt="Arah Konsep ${categoryData.name}" style="max-width: 100%; border-radius: 0.75rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            </div>
+        `;
+    }
+    
     const unlockedIdx = getUnlockedIndex();
     const allComplete = unlockedIdx >= categoryData.items.length;
     
@@ -238,7 +257,7 @@ function renderRoomColumn(item) {
     roomInputs.length = ideaInputs.length;
     
     let html = '<div class="step-col step-col-room">';
-    html += `<div class="col-header"><span class="col-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></span> Ruangan</div>`;
+    html += `<div class="col-header"><span class="col-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></span> Ruangan / Tempat Diletaknya Ide</div>`;
     
     ideaInputs.forEach((_, idx) => {
         const roomVal = roomInputs[idx] || '';
