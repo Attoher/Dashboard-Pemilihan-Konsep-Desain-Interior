@@ -57,7 +57,8 @@ Dashboard-Pemilihan-Konsep-Desain-Interior/
 - Pengumpulan ide penting per kategori dengan penugasan ruangan/tempat diletaknya ide
 - Gambar panduan arah konsep otomatis sesuai kategori terpilih
 - Ekspor data ide dan hasil penilaian ke format PDF (mencakup prioritas, catatan, diagram, dan preview idea)
-- Penyimpanan data otomatis menggunakan localStorage
+- Input sumber pustaka/web (minimal 5, maksimal 10 sumber) yang ditampilkan di halaman hasil dan PDF
+- Penyimpanan data otomatis menggunakan localStorage (termasuk identitas, skor, catatan, ide, dan sumber pustaka)
 - Tampilan responsif untuk desktop dan perangkat mobile
 
 
@@ -65,11 +66,12 @@ Dashboard-Pemilihan-Konsep-Desain-Interior/
 
 1. Buka file index.html di browser.
 2. Isi identitas (Nama Mahasiswa dan Judul Tugas Studio).
-3. Masukkan skor penilaian untuk setiap kriteria di ketiga kategori.
-4. Klik tombol "Proses Seleksi" untuk melihat hasil perbandingan.
-5. Gunakan tombol "Lihat Detail" pada modal hasil untuk melihat rincian per kategori.
-6. Navigasi ke halaman Ide Penting untuk mengelola ide dan penugasan ruangan.
-7. Gunakan fitur ekspor PDF untuk mencetak atau menyimpan hasil.
+3. Isi minimal 5 sumber pustaka/web yang digunakan sebagai referensi analisa.
+4. Masukkan skor penilaian untuk setiap kriteria di ketiga kategori.
+5. Klik tombol "Proses Seleksi" untuk melihat hasil perbandingan.
+6. Gunakan tombol "Lihat Detail" pada modal hasil untuk melihat rincian per kategori.
+7. Navigasi ke halaman Ide Penting untuk mengelola ide dan penugasan ruangan.
+8. Gunakan fitur ekspor PDF untuk mencetak atau menyimpan hasil (termasuk sumber pustaka).
 
 
 ## Deployment

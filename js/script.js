@@ -39,6 +39,8 @@ let appData = {
     competition: { inputs: [], notes: [] }
 };
 
+let sumberPustakaData = ['', '', '', '', ''];
+
 function loadData() {
     const saved = localStorage.getItem('dashboardData');
     if (saved) {
@@ -70,6 +72,7 @@ function loadData() {
         appData.competition.inputs = [''];
     }
     loadIdentitas();
+    loadSumberPustaka();
     renderAll();
 }
 
@@ -94,6 +97,96 @@ function saveIdentitas() {
     localStorage.setItem('identitasData', JSON.stringify(identitas));
 }
 
+// === SUMBER PUSTAKA ===
+function loadSumberPustaka() {
+    const saved = localStorage.getItem('sumberPustakaData');
+    if (saved) {
+        try {
+            sumberPustakaData = JSON.parse(saved);
+            if (!Array.isArray(sumberPustakaData) || sumberPustakaData.length < 5) {
+                while (sumberPustakaData.length < 5) sumberPustakaData.push('');
+            }
+        } catch (e) {
+            sumberPustakaData = ['', '', '', '', ''];
+        }
+    }
+}
+
+function saveSumberPustaka() {
+    localStorage.setItem('sumberPustakaData', JSON.stringify(sumberPustakaData));
+}
+
+function renderSumberPustaka() {
+    const container = document.getElementById('sumberPustakaContainer');
+    if (!container) return;
+    container.innerHTML = '';
+    sumberPustakaData.forEach((val, idx) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'input-row';
+        wrapper.style.marginBottom = '0.5rem';
+
+        const label = document.createElement('label');
+        label.textContent = 'Sumber ' + (idx + 1);
+        label.style.fontWeight = '600';
+        label.style.color = '#854d0e';
+        label.style.minWidth = '80px';
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = 'URL atau judul sumber pustaka/web';
+        input.value = val;
+        input.style.width = '100%';
+        input.style.padding = '0.6rem';
+        input.style.border = '1px solid #d1d5db';
+        input.style.borderRadius = '0.5rem';
+        input.style.fontSize = '0.95rem';
+        input.dataset.index = idx;
+        input.oninput = function(e) {
+            sumberPustakaData[parseInt(e.target.dataset.index)] = e.target.value;
+            saveSumberPustaka();
+        };
+
+        wrapper.appendChild(label);
+        wrapper.appendChild(input);
+        container.appendChild(wrapper);
+    });
+    const counter = document.getElementById('sumberPustakaCounter');
+    if (counter) {
+        const filledCount = sumberPustakaData.filter(s => s && s.trim()).length;
+        counter.textContent = filledCount + ' / ' + sumberPustakaData.length + ' sumber terisi (min 5, maks 10)';
+        counter.style.color = filledCount < 5 ? '#dc2626' : '#854d0e';
+    }
+}
+
+function tambahSumberPustaka() {
+    if (sumberPustakaData.length >= 10) {
+        showAlert('Maksimal 10 sumber pustaka.', 'warning');
+        return;
+    }
+    sumberPustakaData.push('');
+    renderSumberPustaka();
+    saveSumberPustaka();
+}
+
+function hapusSumberPustaka() {
+    if (sumberPustakaData.length <= 5) {
+        showAlert('Minimal 5 sumber pustaka harus dipertahankan.', 'warning');
+        return;
+    }
+    sumberPustakaData.pop();
+    renderSumberPustaka();
+    saveSumberPustaka();
+}
+
+function validateSumberPustaka() {
+    const filled = sumberPustakaData.filter(s => s && s.trim());
+    if (filled.length < 5) {
+        showAlert('Anda harus mengisi minimal <b>5 sumber pustaka</b> sebelum melanjutkan. Saat ini baru terisi ' + filled.length + ' sumber.', 'warning');
+        return false;
+    }
+    return true;
+}
+
 function saveData() {
     localStorage.setItem('dashboardData', JSON.stringify(appData));
 }
@@ -105,6 +198,7 @@ function renderAll() {
     renderNotesList('internal');
     renderNotesList('customer');
     renderNotesList('competition');
+    renderSumberPustaka();
     calculateAverages();
 }
 
@@ -506,6 +600,11 @@ function goToIdeasPage() {
     }
     if (!judul) {
         showAlert('Silakan isi <b>Judul Tugas</b> terlebih dahulu.', 'warning');
+        return;
+    }
+
+    // Validasi sumber pustaka minimal 5
+    if (!validateSumberPustaka()) {
         return;
     }
 
