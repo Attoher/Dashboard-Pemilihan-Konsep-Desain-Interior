@@ -5,21 +5,34 @@
     <title>Detail Idea Konsep Desain</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="../assets/Logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
+<header class="app-bar">
+    <div class="app-bar-inner">
+        <a class="brand" href="../index.html">
+            <img src="../assets/Logo.png" alt="">
+            <span>Konsep Desain Interior</span>
+        </a>
+        <ol class="stepper" aria-label="Tahapan">
+            <li class="is-done"><span class="step-index">1</span>Penilaian</li>
+            <li class="is-active" aria-current="step"><span class="step-index">2</span>Ide<span class="step-text-long">&amp; Ruangan</span></li>
+            <li><span class="step-index">3</span>Hasil</li>
+        </ol>
+    </div>
+</header>
     <div class="container">
         <div class="ideas-top-section">
-            <div>
-                <h1>Rincian Idea Konsep Desain</h1>
-                <div id="identitasDisplay" style="background: #f0f9ff; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem; border-left: 4px solid #3b82f6;">
-                    <div style="font-size: 0.875rem; color: #6b7280;">
-                        <div><strong>Nama Mahasiswa:</strong> <span id="displayNama">-</span></div>
-                        <div><strong>Judul Tugas:</strong> <span id="displayJudul">-</span></div>
-                    </div>
-                </div>
-                <p id="categoryLabel" class="subtitle" style="margin-bottom: 0;">Kategori: Kinerja Internal</p>
+            <span class="eyebrow">Tahap 2 · Ide &amp; Ruangan</span>
+            <h1>Rincian Idea Konsep Desain</h1>
+            <div id="identitasDisplay" class="identity-chip">
+                <span>Nama: <strong id="displayNama">-</strong></span>
+                <span>Judul tugas: <strong id="displayJudul">-</strong></span>
             </div>
+            <span id="categoryLabel" class="category-tag">Kategori: Kinerja Internal</span>
         </div>
 
         <!-- ARAH KONSEP IMAGE -->

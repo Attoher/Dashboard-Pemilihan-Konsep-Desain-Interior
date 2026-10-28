@@ -64,14 +64,14 @@ async function masukNrp() {
         return;
     }
 
-    setNrpStatus('Memuat data...', '#6b7280');
+    setNrpStatus('Memuat data...', 'loading');
     let data;
     try {
         await flushMahasiswa();
         data = await loadMahasiswa(nrp);
     } catch (e) {
         console.error('Gagal memuat data', e);
-        setNrpStatus('Gagal terhubung ke server.', '#dc2626');
+        setNrpStatus('Gagal terhubung ke server.', 'error');
         showAlert('Gagal memuat data dari server. ' + escapeHtml(e.message), 'error');
         return;
     }
@@ -87,13 +87,15 @@ async function masukNrp() {
         saveSumberPustaka();
         saveData();
     }
-    setNrpStatus('Data tersimpan online untuk NRP ' + nrp + '.', '#059669');
+    setNrpStatus('Data tersimpan online untuk NRP ' + nrp + '.', 'ok');
 }
 
-function setNrpStatus(text, color) {
+// state: 'loading' | 'error' | 'ok'
+function setNrpStatus(text, state) {
     const status = document.getElementById('nrpStatus');
     status.textContent = text;
-    status.style.color = color;
+    status.classList.toggle('is-error', state === 'error');
+    status.classList.toggle('is-ok', state === 'ok');
 }
 
 function applyData(data) {
@@ -137,40 +139,39 @@ function renderSumberPustaka() {
     container.innerHTML = '';
     sumberPustakaData.forEach((val, idx) => {
         const wrapper = document.createElement('div');
-        wrapper.className = 'input-row';
-        wrapper.style.marginBottom = '0.5rem';
+        wrapper.className = 'source-row';
 
         const label = document.createElement('label');
+        label.className = 'source-label';
+        label.htmlFor = 'sumber-' + idx;
         label.textContent = 'Sumber ' + (idx + 1);
-        label.style.fontWeight = '600';
-        label.style.color = '#854d0e';
-        label.style.minWidth = '80px';
 
         const input = document.createElement('input');
         input.type = 'text';
+        input.id = 'sumber-' + idx;
+        input.className = 'text-input';
         input.placeholder = 'URL atau judul sumber pustaka/web';
         input.value = val;
-        input.style.width = '100%';
-        input.style.padding = '0.6rem';
-        input.style.border = '1px solid #d1d5db';
-        input.style.borderRadius = '0.5rem';
-        input.style.fontSize = '0.95rem';
         input.dataset.index = idx;
         input.oninput = function(e) {
             sumberPustakaData[parseInt(e.target.dataset.index)] = e.target.value;
             saveSumberPustaka();
+            updateSumberPustakaCounter();
         };
 
         wrapper.appendChild(label);
         wrapper.appendChild(input);
         container.appendChild(wrapper);
     });
+    updateSumberPustakaCounter();
+}
+
+function updateSumberPustakaCounter() {
     const counter = document.getElementById('sumberPustakaCounter');
-    if (counter) {
-        const filledCount = sumberPustakaData.filter(s => s && s.trim()).length;
-        counter.textContent = filledCount + ' / ' + sumberPustakaData.length + ' sumber terisi (min 5, maks 10)';
-        counter.style.color = filledCount < 5 ? '#dc2626' : '#854d0e';
-    }
+    if (!counter) return;
+    const filledCount = sumberPustakaData.filter(s => s && s.trim()).length;
+    counter.textContent = filledCount + ' / ' + sumberPustakaData.length + ' sumber terisi';
+    counter.classList.toggle('is-short', filledCount < 5);
 }
 
 function tambahSumberPustaka() {
@@ -240,7 +241,7 @@ function addInputRow(type, index, value) {
     input.type = 'number';
     input.min = 1;
     input.max = 100;
-    input.placeholder = 'Skor 1-100';
+    input.placeholder = '1–100';
     input.value = value;
     input.dataset.type = type;
     input.dataset.index = index;
