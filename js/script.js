@@ -41,79 +41,94 @@ let appData = {
 
 let sumberPustakaData = ['', '', '', '', ''];
 
+// NRP aktif; selama kosong, data hanya ada di halaman dan belum disimpan ke server
+let currentNrp = '';
+
 function loadData() {
-    const saved = localStorage.getItem('dashboardData');
-    if (saved) {
-        try {
-            appData = JSON.parse(saved);
-            // Migrate old formats
-            ['internal', 'customer', 'competition'].forEach(type => {
-                // Migrate old single-note to notes array
-                if (!Array.isArray(appData[type].notes)) {
-                    if (appData[type].note && typeof appData[type].note === 'string') {
-                        appData[type].notes = [appData[type].note];
-                    } else {
-                        appData[type].notes = [];
-                    }
-                    delete appData[type].note;
-                }
-                // Remove legacy keyword field
-                if ('keyword' in appData[type]) {
-                    delete appData[type].keyword;
-                }
-                saveData();
-            });
-        } catch (e) {
-            console.error('Gagal memuat data', e);
-        }
-    } else {
-        appData.internal.inputs = [''];
-        appData.customer.inputs = [''];
-        appData.competition.inputs = [''];
+    appData.internal.inputs = [''];
+    appData.customer.inputs = [''];
+    appData.competition.inputs = [''];
+    renderAll();
+
+    const nrp = getNrp();
+    if (nrp) {
+        document.getElementById('nrpMahasiswa').value = nrp;
+        masukNrp();
     }
-    loadIdentitas();
-    loadSumberPustaka();
+}
+
+async function masukNrp() {
+    const nrp = document.getElementById('nrpMahasiswa').value.trim();
+    if (!isValidNrp(nrp)) {
+        showAlert('NRP tidak valid. Gunakan 3-30 karakter huruf, angka, "-" atau "_".', 'warning');
+        return;
+    }
+
+    setNrpStatus('Memuat data...', '#6b7280');
+    let data;
+    try {
+        await flushMahasiswa();
+        data = await loadMahasiswa(nrp);
+    } catch (e) {
+        console.error('Gagal memuat data', e);
+        setNrpStatus('Gagal terhubung ke server.', '#dc2626');
+        showAlert('Gagal memuat data dari server. ' + escapeHtml(e.message), 'error');
+        return;
+    }
+
+    currentNrp = nrp;
+    history.replaceState(null, '', withNrp(window.location.pathname, nrp));
+
+    if (data) {
+        applyData(data);
+    } else {
+        // NRP baru: simpan isian yang sudah diketik di halaman
+        saveIdentitas();
+        saveSumberPustaka();
+        saveData();
+    }
+    setNrpStatus('Data tersimpan online untuk NRP ' + nrp + '.', '#059669');
+}
+
+function setNrpStatus(text, color) {
+    const status = document.getElementById('nrpStatus');
+    status.textContent = text;
+    status.style.color = color;
+}
+
+function applyData(data) {
+    const dashboard = data.dashboardData || {};
+    ['internal', 'customer', 'competition'].forEach(type => {
+        const saved = dashboard[type] || {};
+        appData[type] = {
+            inputs: Array.isArray(saved.inputs) && saved.inputs.length ? saved.inputs.map(v => v || '') : [''],
+            notes: Array.isArray(saved.notes) ? saved.notes.filter(Boolean) : []
+        };
+    });
+
+    const identitas = data.identitasData || {};
+    document.getElementById('namaMahasiswa').value = identitas.namaMahasiswa || '';
+    document.getElementById('judulTugas').value = identitas.judulTugas || '';
+
+    sumberPustakaData = Array.isArray(data.sumberPustakaData) ? data.sumberPustakaData.map(s => s || '') : [];
+    while (sumberPustakaData.length < 5) sumberPustakaData.push('');
+
     renderAll();
 }
 
-function loadIdentitas() {
-    const identitas = localStorage.getItem('identitasData');
-    if (identitas) {
-        try {
-            const data = JSON.parse(identitas);
-            document.getElementById('namaMahasiswa').value = data.namaMahasiswa || '';
-            document.getElementById('judulTugas').value = data.judulTugas || '';
-        } catch (e) {
-            console.error('Gagal memuat identitas', e);
-        }
-    }
-}
-
 function saveIdentitas() {
+    if (!currentNrp) return;
     const identitas = {
         namaMahasiswa: document.getElementById('namaMahasiswa').value,
         judulTugas: document.getElementById('judulTugas').value
     };
-    localStorage.setItem('identitasData', JSON.stringify(identitas));
+    saveMahasiswaField(currentNrp, 'identitasData', identitas);
 }
 
 // === SUMBER PUSTAKA ===
-function loadSumberPustaka() {
-    const saved = localStorage.getItem('sumberPustakaData');
-    if (saved) {
-        try {
-            sumberPustakaData = JSON.parse(saved);
-            if (!Array.isArray(sumberPustakaData) || sumberPustakaData.length < 5) {
-                while (sumberPustakaData.length < 5) sumberPustakaData.push('');
-            }
-        } catch (e) {
-            sumberPustakaData = ['', '', '', '', ''];
-        }
-    }
-}
-
 function saveSumberPustaka() {
-    localStorage.setItem('sumberPustakaData', JSON.stringify(sumberPustakaData));
+    if (!currentNrp) return;
+    saveMahasiswaField(currentNrp, 'sumberPustakaData', sumberPustakaData);
 }
 
 function renderSumberPustaka() {
@@ -188,7 +203,8 @@ function validateSumberPustaka() {
 }
 
 function saveData() {
-    localStorage.setItem('dashboardData', JSON.stringify(appData));
+    if (!currentNrp) return;
+    saveMahasiswaField(currentNrp, 'dashboardData', appData);
 }
 
 function renderAll() {
@@ -585,7 +601,12 @@ function goToResultPage() {
     window.open('result.html', '_blank');
 }
 
-function goToIdeasPage() {
+async function goToIdeasPage() {
+    if (!currentNrp) {
+        showAlert('Silakan isi <b>NRP</b> lalu klik <b>Muat Data</b> terlebih dahulu.', 'warning');
+        return;
+    }
+
     // Validasi identitas
     const nama = document.getElementById('namaMahasiswa').value.trim();
     const judul = document.getElementById('judulTugas').value.trim();
@@ -622,9 +643,10 @@ function goToIdeasPage() {
         category = 'competition';
     }
     
-    localStorage.setItem('winningCategory', category);
-    
-    window.location.href = 'pages/ideas.html?category=' + category;
+    saveMahasiswaField(currentNrp, 'winningCategory', category);
+    await flushMahasiswa();
+
+    window.location.href = withNrp('pages/ideas.html?category=' + category, currentNrp);
 }
 
 window.onload = function() {

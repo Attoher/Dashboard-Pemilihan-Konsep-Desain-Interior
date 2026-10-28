@@ -30,40 +30,44 @@ const IDEAS_DATA = {
 };
 
 let currentCategory = '';
+let currentNrp = '';
 let ideasStorage = {};
 
-function loadData() {
+async function loadData() {
     const params = new URLSearchParams(window.location.search);
     currentCategory = params.get('category') || 'internal';
-    
-    const saved = localStorage.getItem('ideasData');
-    if (saved) {
-        try {
-            ideasStorage = JSON.parse(saved);
-        } catch (e) {
-            console.error('Error loading ideas data', e);
-        }
+    currentNrp = getNrp();
+
+    if (!currentNrp) {
+        showAlert('NRP tidak ditemukan. Silakan kembali ke dashboard dan isi NRP terlebih dahulu.', 'warning');
+        return;
     }
-    
+
+    let data;
+    try {
+        data = await loadMahasiswa(currentNrp) || {};
+    } catch (e) {
+        console.error('Error loading data', e);
+        showAlert('Gagal memuat data dari server. ' + escapeHtml(e.message), 'error');
+        return;
+    }
+
+    ideasStorage = data.ideasData || {};
     if (!ideasStorage[currentCategory]) {
         ideasStorage[currentCategory] = {};
     }
-    
-    loadIdentitas();
+
+    loadIdentitas(data.identitasData || {});
     renderContent();
 }
 
-function loadIdentitas() {
-    const identitas = localStorage.getItem('identitasData');
-    if (identitas) {
-        try {
-            const data = JSON.parse(identitas);
-            document.getElementById('displayNama').textContent = data.namaMahasiswa || '-';
-            document.getElementById('displayJudul').textContent = data.judulTugas || '-';
-        } catch (e) {
-            console.error('Error loading identitas', e);
-        }
-    }
+function loadIdentitas(identitas) {
+    document.getElementById('displayNama').textContent = identitas.namaMahasiswa || '-';
+    document.getElementById('displayJudul').textContent = identitas.judulTugas || '-';
+}
+
+function saveIdeasData() {
+    saveMahasiswaField(currentNrp, 'ideasData', ideasStorage);
 }
 
 // === WORKFLOW LOGIC ===
@@ -336,7 +340,7 @@ function saveIdeaInput(input) {
     }
     
     ideasStorage[currentCategory][key][index] = input.value;
-    localStorage.setItem('ideasData', JSON.stringify(ideasStorage));
+    saveIdeasData();
 }
 
 function saveRoomInput(input) {
@@ -349,7 +353,7 @@ function saveRoomInput(input) {
     }
     
     ideasStorage[currentCategory][key][index] = input.value;
-    localStorage.setItem('ideasData', JSON.stringify(ideasStorage));
+    saveIdeasData();
 }
 
 function addIdeaInput(ideaNum) {
@@ -363,7 +367,7 @@ function addIdeaInput(ideaNum) {
     
     if (ideasStorage[currentCategory][key].length < item.maxInputs) {
         ideasStorage[currentCategory][key].push('');
-        localStorage.setItem('ideasData', JSON.stringify(ideasStorage));
+        saveIdeasData();
         renderContent();
     }
 }
@@ -382,7 +386,7 @@ function removeIdeaInput(ideaNum, index) {
             }
         }
         
-        localStorage.setItem('ideasData', JSON.stringify(ideasStorage));
+        saveIdeasData();
         renderContent();
     }
 }
@@ -390,7 +394,7 @@ function removeIdeaInput(ideaNum, index) {
 // === UTILITY ===
 
 function saveAllIdeas() {
-    localStorage.setItem('ideasData', JSON.stringify(ideasStorage));
+    saveIdeasData();
     showStatus('Semua idea berhasil disimpan!', 'success');
 }
 
@@ -430,7 +434,7 @@ function exportData() {
         const roomKey = `room_${item.roomNum}`;
         const ideaInputs = ideasStorage[currentCategory][ideaKey] || [];
         const roomInputs = ideasStorage[currentCategory][roomKey] || [];
-        const filledIdeas = ideaInputs.filter(i => i.trim());
+        const filledIdeas = ideaInputs.filter(i => i && i.trim());
         
         html += `
             <div style="margin-bottom: 8px;">
@@ -481,10 +485,16 @@ function goBack() {
     window.history.back();
 }
 
-function goToResultPage() {
+async function goToDashboard() {
+    await flushMahasiswa();
+    window.location.href = withNrp('../index.html', currentNrp);
+}
+
+async function goToResultPage() {
     const categoryData = IDEAS_DATA[currentCategory];
     if (!categoryData) {
-        window.location.href = 'result.html';
+        await flushMahasiswa();
+        window.location.href = withNrp('result.html', currentNrp);
         return;
     }
 
@@ -503,7 +513,8 @@ function goToResultPage() {
         return;
     }
 
-    window.location.href = 'result.html';
+    await flushMahasiswa();
+    window.location.href = withNrp('result.html', currentNrp);
 }
 
 function escapeHtml(text) {
@@ -514,7 +525,7 @@ function escapeHtml(text) {
         '"': '&quot;',
         "'": '&#039;'
     };
-    return text.replace(/[&<>"']/g, m => map[m]);
+    return String(text ?? '').replace(/[&<>"']/g, m => map[m]);
 }
 
 window.addEventListener('DOMContentLoaded', loadData);

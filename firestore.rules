@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Satu dokumen per mahasiswa, ID dokumen = NRP. Tanpa login: siapa pun yang tahu NRP bisa membaca/mengubah.
+    match /mahasiswa/{nrp} {
+      allow read: if nrp.matches('^[A-Za-z0-9_-]{3,30}$');
+      allow create, update: if nrp.matches('^[A-Za-z0-9_-]{3,30}$')
+        && request.resource.data.keys().hasOnly([
+          'identitasData', 'sumberPustakaData', 'dashboardData',
+          'ideasData', 'winningCategory', 'updatedAt'
+        ]);
+      allow delete: if false;
+    }
+  }
+}

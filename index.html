@@ -10,11 +10,21 @@
 <body>
 <div class="container">
     <h1><svg class="icon-inline icon-title" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> Dashboard Pemilihan Konsep Desain Interior</h1>
-    <p class="subtitle">Bagian 1: Isian Skor Maksimal 7 Mahasiswa per Kategori (Data Tersimpan Otomatis)</p>
+    <p class="subtitle">Bagian 1: Isian Skor Maksimal 7 Mahasiswa per Kategori (Data Tersimpan Otomatis secara Online)</p>
 
     <!-- INPUT MAHASISWA DAN JUDUL TUGAS -->
     <div style="background: #f0f9ff; border: 2px solid #3b82f6; border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem;">
         <h2 style="font-size: 1.25rem; margin-bottom: 1rem; color: #1e40af; display: flex; align-items: center; gap: 0.5rem;"><svg class="icon-inline" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Identitas Pengerjaan</h2>
+        <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1f2937;">NRP</label>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <input id="nrpMahasiswa" type="text" placeholder="Masukkan NRP" maxlength="30"
+                       onkeydown="if (event.key === 'Enter') masukNrp()"
+                       style="flex: 1; min-width: 0; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 1rem;">
+                <button onclick="masukNrp()" class="btn blue-bg">Muat Data</button>
+            </div>
+            <div id="nrpStatus" style="font-size: 0.85rem; color: #dc2626; margin-top: 0.5rem;">Masukkan NRP lalu klik Muat Data agar data tersimpan online.</div>
+        </div>
         <div class="identitas-grid">
             <div>
                 <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #1f2937;">Nama Mahasiswa</label>
@@ -167,7 +177,11 @@
     </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="js/custom-alert.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/db.js"></script>
 <script src="js/script.js"></script>
 </body>
 </html>

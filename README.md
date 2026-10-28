@@ -22,7 +22,7 @@ Aplikasi ini merupakan tools bantu untuk proses pemilihan konsep desain interior
 - **CSS3** - Styling dan layout responsif (mendukung tampilan desktop dan mobile)
 - **JavaScript (Vanilla)** - Logika aplikasi tanpa framework tambahan
 - **html2pdf.js v0.10.1** - Library untuk mengekspor halaman ke format PDF (dimuat via CDN)
-- **localStorage** - Penyimpanan data lokal di browser untuk menyimpan skor penilaian, data ide, dan identitas pengguna
+- **Firebase Cloud Firestore (SDK compat v10.12.2)** - Database online untuk menyimpan skor penilaian, catatan, data ide, sumber pustaka, dan identitas pengguna (satu dokumen per NRP)
 
 
 ## Struktur Folder
@@ -31,6 +31,7 @@ Aplikasi ini merupakan tools bantu untuk proses pemilihan konsep desain interior
 Dashboard-Pemilihan-Konsep-Desain-Interior/
   index.html              Halaman utama (Dashboard Penilaian)
   README.md
+  firestore.rules         Security rules Cloud Firestore
   assets/
     Interior.png           Gambar header halaman hasil
     Logo.png               Logo aplikasi
@@ -40,6 +41,9 @@ Dashboard-Pemilihan-Konsep-Desain-Interior/
   css/
     style.css              Seluruh styling aplikasi
   js/
+    firebase-config.js     Konfigurasi Firebase project
+    db.js                  Helper baca/tulis Firestore
+    custom-alert.js        Modal alert & konfirmasi
     script.js              Logika dashboard dan data kategori
     ideas.js               Logika halaman ide penting
   pages/
@@ -58,20 +62,30 @@ Dashboard-Pemilihan-Konsep-Desain-Interior/
 - Gambar panduan arah konsep otomatis sesuai kategori terpilih
 - Ekspor data ide dan hasil penilaian ke format PDF (mencakup prioritas, catatan, diagram, dan preview idea)
 - Input sumber pustaka/web (minimal 5, maksimal 10 sumber) yang ditampilkan di halaman hasil dan PDF
-- Penyimpanan data otomatis menggunakan localStorage (termasuk identitas, skor, catatan, ide, dan sumber pustaka)
+- Penyimpanan data otomatis secara online di Firebase Firestore berdasarkan NRP, sehingga bisa dilanjutkan dari perangkat mana pun
 - Tampilan responsif untuk desktop dan perangkat mobile
 
 
 ## Cara Penggunaan
 
 1. Buka file index.html di browser.
-2. Isi identitas (Nama Mahasiswa dan Judul Tugas Studio).
-3. Isi minimal 5 sumber pustaka/web yang digunakan sebagai referensi analisa.
-4. Masukkan skor penilaian untuk setiap kriteria di ketiga kategori.
-5. Klik tombol "Proses Seleksi" untuk melihat hasil perbandingan.
-6. Gunakan tombol "Lihat Detail" pada modal hasil untuk melihat rincian per kategori.
-7. Navigasi ke halaman Ide Penting untuk mengelola ide dan penugasan ruangan.
-8. Gunakan fitur ekspor PDF untuk mencetak atau menyimpan hasil (termasuk sumber pustaka).
+2. Isi NRP lalu klik "Muat Data" (data lama dengan NRP yang sama akan dimuat dari server).
+3. Isi identitas (Nama Mahasiswa dan Judul Tugas Studio).
+4. Isi minimal 5 sumber pustaka/web yang digunakan sebagai referensi analisa.
+5. Masukkan skor penilaian untuk setiap kriteria di ketiga kategori.
+6. Klik tombol "Proses Seleksi" untuk melihat hasil perbandingan.
+7. Gunakan tombol "Lihat Detail" pada modal hasil untuk melihat rincian per kategori.
+8. Navigasi ke halaman Ide Penting untuk mengelola ide dan penugasan ruangan.
+9. Gunakan fitur ekspor PDF untuk mencetak atau menyimpan hasil (termasuk sumber pustaka).
+
+
+## Setup Firebase
+
+1. Buat project di [Firebase Console](https://console.firebase.google.com/), lalu aktifkan **Firestore Database**.
+2. Tambahkan Web app di Project settings, salin objek konfigurasinya ke `js/firebase-config.js`.
+3. Salin isi `firestore.rules` ke tab **Rules** di Firestore, lalu klik Publish.
+
+Data disimpan di koleksi `mahasiswa`, dengan ID dokumen = NRP. Karena tanpa login, siapa pun yang mengetahui NRP dapat membuka dan mengubah data tersebut.
 
 
 ## Deployment
