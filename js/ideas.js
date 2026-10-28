@@ -137,6 +137,7 @@ function renderContent() {
     }
     
     attachEventListeners();
+    lastProgressKey = getProgressKey();
 }
 
 function renderProgressBar(categoryData, unlockedIdx) {
@@ -305,25 +306,55 @@ function attachEventListeners() {
 
 function handleIdeaInput(e) {
     saveIdeaInput(e.target);
+    refreshIfProgressChanged(e.target);
 }
 
+// Status selesai/terkunci tiap ide, dipakai untuk mendeteksi kapan tampilan perlu dirender ulang
+let lastProgressKey = '';
+let isRefreshing = false;
+
+function getProgressKey() {
+    return IDEAS_DATA[currentCategory].items.map(item => isIdeaComplete(item) ? '1' : '0').join('');
+}
+
+// Buka/kunci langkah berikutnya langsung saat mengetik, lalu kembalikan fokus & posisi kursor
+function refreshIfProgressChanged(input) {
+    if (getProgressKey() === lastProgressKey) return;
+
+    const type = input.classList.contains('idea-input') ? 'idea-input' : 'room-input';
+    const selector = `.${type}[data-idea="${input.dataset.idea}"][data-index="${input.dataset.index}"]`;
+    const caret = input.selectionStart;
+
+    isRefreshing = true;
+    renderContent();
+    isRefreshing = false;
+
+    const restored = document.querySelector(selector);
+    if (restored) {
+        restored.focus();
+        restored.setSelectionRange(caret, caret);
+    }
+}
+
+// Render ulang tidak dilakukan di sini (sudah ditangani saat input) supaya fokus Tab tidak hilang
 function handleIdeaBlur(e) {
+    if (isRefreshing) return;
     const wordCount = countWords(e.target.value);
     if (wordCount > 20) {
         showAlert('Maksimal 20 kata!', 'warning');
         e.target.value = e.target.value.split(' ').slice(0, 20).join(' ');
     }
     saveIdeaInput(e.target);
-    renderContent();
 }
 
 function handleRoomInput(e) {
     saveRoomInput(e.target);
+    refreshIfProgressChanged(e.target);
 }
 
 function handleRoomBlur(e) {
+    if (isRefreshing) return;
     saveRoomInput(e.target);
-    renderContent();
 }
 
 function countWords(text) {
