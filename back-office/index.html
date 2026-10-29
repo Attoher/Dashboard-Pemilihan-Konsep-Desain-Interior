@@ -19,11 +19,29 @@
             <img src="../assets/Logo.png" alt="">
             <span>Konsep Desain Interior</span>
         </a>
-        <span class="bo-badge">Back Office</span>
+        <div class="bo-bar-actions">
+            <span class="bo-badge">Back Office</span>
+            <button id="boLogout" class="btn btn-secondary bo-logout" hidden>Keluar</button>
+        </div>
     </div>
 </header>
 
-<main class="container">
+<!-- Masuk back office: sandi dicocokkan oleh Firebase Authentication (akun admin) -->
+<section id="boLogin" class="bo-login" hidden>
+    <form id="boLoginForm" class="panel bo-login-card">
+        <span class="eyebrow">Back Office</span>
+        <h1>Masuk</h1>
+        <p class="subtitle">Masukkan sandi back office untuk melihat rekap mahasiswa.</p>
+        <div class="field">
+            <label class="field-label" for="boPassword">Sandi</label>
+            <input id="boPassword" class="text-input" type="password" autocomplete="current-password" required>
+            <p id="boLoginError" class="field-hint is-error" hidden></p>
+        </div>
+        <button id="boLoginButton" type="submit" class="btn btn-primary">Masuk</button>
+    </form>
+</section>
+
+<main id="boMain" class="container" hidden>
     <section class="page-intro bo-intro">
         <div>
             <span class="eyebrow">Back Office</span>
@@ -91,6 +109,7 @@
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="../js/custom-alert.js"></script>
 <script src="../js/firebase-config.js"></script>
 <script src="../js/db.js"></script>

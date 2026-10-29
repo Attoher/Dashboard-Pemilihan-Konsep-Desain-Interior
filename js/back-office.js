@@ -37,6 +37,10 @@ const BO_CATEGORIES = {
 };
 const BO_TYPES = ['internal', 'customer', 'competition'];
 
+// Akun admin di Firebase Authentication. Pengguna cukup mengetik sandinya; firestore.rules hanya
+// mengizinkan daftar & hapus data mahasiswa untuk akun ini.
+const BO_ADMIN_EMAIL = 'admin@dashboard-konsep-desain-interior.app';
+
 let boRecords = [];
 
 // Isian mahasiswa ditampilkan di teks maupun atribut (href), jadi tanda kutip ikut di-escape
@@ -344,15 +348,68 @@ window.addEventListener('DOMContentLoaded', () => {
 
     if (!firestore) {
         document.getElementById('boRows').innerHTML = '<tr><td colspan="9" class="bo-empty">Firebase belum dikonfigurasi.</td></tr>';
+        document.getElementById('boMain').hidden = false;
         return;
     }
-    firestore.collection('mahasiswa').onSnapshot(snapshot => {
-        boRecords = snapshot.docs.map(boToRecord);
-        boRender();
-    }, error => {
-        console.error(error);
-        document.getElementById('boRows').innerHTML = `<tr><td colspan="9" class="bo-empty">Gagal memuat data${error.code === 'permission-denied' ? ': aturan Firestore belum mengizinkan daftar mahasiswa (publish ulang firestore.rules).' : '.'}</td></tr>`;
+
+    const auth = firebase.auth();
+    let unsubscribe = null;
+
+    const showLogin = () => {
+        document.getElementById('boLogin').hidden = false;
+        document.getElementById('boMain').hidden = true;
+        document.getElementById('boLogout').hidden = true;
+        document.getElementById('boPassword').focus();
+    };
+
+    const showData = () => {
+        document.getElementById('boLogin').hidden = true;
+        document.getElementById('boMain').hidden = false;
+        document.getElementById('boLogout').hidden = false;
+        unsubscribe = firestore.collection('mahasiswa').onSnapshot(snapshot => {
+            boRecords = snapshot.docs.map(boToRecord);
+            boRender();
+        }, error => {
+            console.error(error);
+            document.getElementById('boRows').innerHTML = `<tr><td colspan="9" class="bo-empty">Gagal memuat data${error.code === 'permission-denied' ? ': akses ditolak aturan Firestore.' : '.'}</td></tr>`;
+        });
+    };
+
+    // Sesi admin diingat browser; hanya akun admin yang dianggap masuk
+    auth.onAuthStateChanged(user => {
+        if (unsubscribe) {
+            unsubscribe();
+            unsubscribe = null;
+        }
+        boRecords = [];
+        if (user && user.email === BO_ADMIN_EMAIL) showData();
+        else showLogin();
     });
+
+    document.getElementById('boLoginForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const errorEl = document.getElementById('boLoginError');
+        const button = document.getElementById('boLoginButton');
+        errorEl.hidden = true;
+        button.disabled = true;
+        try {
+            await auth.signInWithEmailAndPassword(BO_ADMIN_EMAIL, document.getElementById('boPassword').value);
+            document.getElementById('boPassword').value = '';
+        } catch (error) {
+            console.error(error);
+            const wrong = ['auth/wrong-password', 'auth/invalid-credential', 'auth/invalid-login-credentials', 'auth/user-not-found'];
+            errorEl.textContent = wrong.includes(error.code)
+                ? 'Sandi salah.'
+                : error.code === 'auth/too-many-requests'
+                    ? 'Terlalu banyak percobaan. Coba lagi beberapa menit lagi.'
+                    : 'Tidak bisa masuk. Periksa koneksi internet Anda.';
+            errorEl.hidden = false;
+        } finally {
+            button.disabled = false;
+        }
+    });
+
+    document.getElementById('boLogout').addEventListener('click', () => auth.signOut());
 
     // Label "x menit lalu" diperbarui tiap menit
     setInterval(boRenderRows, 60000);

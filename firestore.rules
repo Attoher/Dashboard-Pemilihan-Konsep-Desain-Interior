@@ -1,18 +1,23 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Akun admin back office (Firebase Authentication, email + sandi)
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == 'admin@dashboard-konsep-desain-interior.app';
+    }
+
     // Satu dokumen per mahasiswa, ID dokumen = NRP. Tanpa login: siapa pun yang tahu NRP bisa membaca/mengubah.
     match /mahasiswa/{nrp} {
       allow get: if nrp.matches('^[A-Za-z0-9_-]{3,30}$');
-      // Daftar semua mahasiswa untuk halaman /back-office
-      allow list: if true;
+      // Daftar & hapus semua mahasiswa hanya untuk admin yang masuk di /back-office
+      allow list: if isAdmin();
       allow create, update: if nrp.matches('^[A-Za-z0-9_-]{3,30}$')
         && request.resource.data.keys().hasOnly([
           'identitasData', 'sumberPustakaData', 'dashboardData',
           'ideasData', 'winningCategory', 'updatedAt'
         ]);
-      // Hapus data mahasiswa dari halaman /back-office
-      allow delete: if nrp.matches('^[A-Za-z0-9_-]{3,30}$');
+      allow delete: if isAdmin();
     }
   }
 }

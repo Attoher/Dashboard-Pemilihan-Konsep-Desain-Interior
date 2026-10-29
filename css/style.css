@@ -1540,6 +1540,40 @@ textarea::placeholder,
 }
 
 /* ---------- Back office ---------- */
+.bo-bar-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.bo-logout {
+    padding: 0.4rem 0.9rem;
+    font-size: 0.8rem;
+}
+
+.bo-login {
+    display: flex;
+    justify-content: center;
+    padding: 4rem 1rem;
+}
+
+.bo-login[hidden],
+#boMain[hidden],
+.bo-logout[hidden] {
+    display: none;
+}
+
+.bo-login-card {
+    width: 100%;
+    max-width: 24rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.bo-login-card h1 {
+    margin-bottom: 0;
+}
 .sr-only {
     position: absolute;
     width: 1px;

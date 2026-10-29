@@ -91,7 +91,7 @@ Rekap semua mahasiswa tersedia di **`/back-office`**. Tidak ada tautan ke halama
 - **Export CSV** (bisa dibuka di Excel).
 - **Hapus data** mahasiswa, dari ikon tempat sampah di tabel atau tombol di jendela detail, dengan konfirmasi. Penghapusan permanen.
 
-Halaman ini **tidak memakai login**. Siapa pun yang tahu alamatnya bisa melihat rekap, dan `firestore.rules` mengizinkan daftar dan penghapusan dokumen `mahasiswa` untuk keperluan ini.
+Halaman ini **dilindungi sandi**. Sandi adalah akun admin `admin@dashboard-konsep-desain-interior.app` di Firebase Authentication (metode Email/Password), dan sandinya diganti lewat Firebase Console → Authentication. `firestore.rules` hanya mengizinkan daftar dan penghapusan dokumen `mahasiswa` untuk akun admin tersebut.
 
 ## Setup Firebase
 
