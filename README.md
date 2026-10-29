@@ -46,6 +46,8 @@ Dashboard-Pemilihan-Konsep-Desain-Interior/
     custom-alert.js        Modal alert & konfirmasi
     script.js              Logika dashboard dan data kategori
     ideas.js               Logika halaman ide penting
+  back-office/
+    index.html             Rekap semua mahasiswa (/back-office)
   pages/
     ideas.html             Halaman pengumpulan ide penting
     result.html            Halaman hasil penilaian
@@ -78,6 +80,17 @@ Dashboard-Pemilihan-Konsep-Desain-Interior/
 8. Navigasi ke halaman Ide Penting untuk mengelola ide dan penugasan ruangan.
 9. Gunakan fitur ekspor PDF untuk mencetak atau menyimpan hasil (termasuk sumber pustaka).
 
+
+## Back Office
+
+Rekap semua mahasiswa tersedia di **`/back-office`**. Tidak ada tautan ke halaman ini dari halaman mahasiswa, jadi alamatnya diketik langsung. Isinya:
+
+- **Ringkasan:** jumlah mahasiswa, yang ide-idenya sudah lengkap, sebaran kategori pemenang, dan rata-rata skor.
+- **Tabel mahasiswa:** pencarian, filter kategori, urutan, dan pembaruan realtime.
+- **Detail per mahasiswa:** skor dan catatan, sumber pustaka, ide dan ruangan, serta tautan ke dashboard dan halaman hasil mahasiswa tersebut.
+- **Export CSV** (bisa dibuka di Excel).
+
+Halaman ini **tidak memakai login**. Siapa pun yang tahu alamatnya bisa melihat rekap, dan `firestore.rules` mengizinkan daftar dokumen `mahasiswa` untuk keperluan ini.
 
 ## Setup Firebase
 

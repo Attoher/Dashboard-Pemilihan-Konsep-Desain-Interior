@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Back Office · Konsep Desain Interior</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Halaman internal: jangan muncul di mesin pencari -->
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/png" href="../assets/Logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<header class="app-bar">
+    <div class="app-bar-inner">
+        <a class="brand" href="../index.html">
+            <img src="../assets/Logo.png" alt="">
+            <span>Konsep Desain Interior</span>
+        </a>
+        <span class="bo-badge">Back Office</span>
+    </div>
+</header>
+
+<main class="container">
+    <section class="page-intro bo-intro">
+        <div>
+            <span class="eyebrow">Back Office</span>
+            <h1>Rekap Pengerjaan Mahasiswa</h1>
+            <p class="subtitle">Semua isian mahasiswa, diperbarui otomatis setiap ada perubahan.</p>
+        </div>
+        <button id="exportCsv" class="btn btn-secondary" disabled>
+            <svg class="icon-btn" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export CSV
+        </button>
+    </section>
+
+    <section id="boStats" class="bo-stats" aria-live="polite"></section>
+
+    <section class="panel">
+        <div class="bo-toolbar">
+            <input id="boSearch" class="text-input" type="search" placeholder="Cari nama, NRP, atau judul tugas…" aria-label="Cari mahasiswa">
+            <select id="boCategory" class="text-input" aria-label="Filter kategori">
+                <option value="semua">Semua kategori</option>
+                <option value="internal">Kinerja Internal</option>
+                <option value="customer">Customer &amp; Experience</option>
+                <option value="competition">Persaingan</option>
+                <option value="belum">Belum ada skor</option>
+            </select>
+            <select id="boSort" class="text-input" aria-label="Urutkan">
+                <option value="terbaru">Terbaru diperbarui</option>
+                <option value="nama">Nama A–Z</option>
+                <option value="nrp">NRP</option>
+                <option value="progres">Progres tertinggi</option>
+            </select>
+        </div>
+        <div class="bo-table-wrap">
+            <table class="bo-table">
+                <thead>
+                    <tr>
+                        <th>Mahasiswa</th>
+                        <th>Kategori pemenang</th>
+                        <th class="num">Internal</th>
+                        <th class="num">Customer</th>
+                        <th class="num">Persaingan</th>
+                        <th class="num">Sumber</th>
+                        <th>Progres ide</th>
+                        <th>Diperbarui</th>
+                    </tr>
+                </thead>
+                <tbody id="boRows">
+                    <tr><td colspan="8" class="bo-empty">Memuat data…</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<!-- Detail mahasiswa -->
+<div id="boDetail" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="boDetailTitle">
+    <div class="modal-content bo-detail">
+        <div class="modal-header">
+            <h3 id="boDetailTitle">Detail</h3>
+            <button class="close-btn" data-close aria-label="Tutup">&times;</button>
+        </div>
+        <div id="boDetailBody"></div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="../js/custom-alert.js"></script>
+<script src="../js/firebase-config.js"></script>
+<script src="../js/db.js"></script>
+<script src="../js/back-office.js"></script>
+</body>
+</html>
