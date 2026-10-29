@@ -211,7 +211,9 @@ function boOpenDetail(nrp) {
     if (!r) return;
     const dashboard = r.raw.dashboardData || {};
     const ideas = r.raw.ideasData || {};
-    const link = (page) => `../${page}?nrp=${encodeURIComponent(r.nrp)}`;
+    // NRP tidak lewat URL: diset ke sesi tab lalu halaman dibuka di tab baru (sesi ikut tersalin)
+    const open = (page, label, style) =>
+        `<button type="button" class="btn ${style}" data-open="${page}" data-nrp-open="${boEscape(r.nrp)}">${label}</button>`;
 
     const scoreBlocks = BO_TYPES.map(t => {
         const data = dashboard[t] || {};
@@ -253,8 +255,8 @@ function boOpenDetail(nrp) {
             <span>Diperbarui <strong>${boFormatDate(r.updated)}</strong></span>
         </div>
         <div class="bo-detail-actions">
-            <a class="btn btn-secondary" href="${link('index.html')}" target="_blank" rel="noopener">Buka dashboard mahasiswa</a>
-            <a class="btn btn-primary" href="${link('pages/result.html')}" target="_blank" rel="noopener">Lihat halaman hasil</a>
+            ${open('index.html', 'Buka dashboard mahasiswa', 'btn-secondary')}
+            ${open('pages/result.html', 'Lihat halaman hasil', 'btn-primary')}
             <button type="button" class="btn bo-delete-btn" data-delete="${boEscape(r.nrp)}">Hapus data</button>
         </div>
         <h4 class="bo-h4">Skor &amp; catatan</h4>
@@ -340,7 +342,11 @@ window.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('boDetail');
     modal.addEventListener('click', e => {
         const del = e.target.closest('[data-delete]');
-        if (del) boDelete(del.dataset.delete);
+        const openBtn = e.target.closest('[data-open]');
+        if (openBtn) {
+            setActiveNrp(openBtn.dataset.nrpOpen);
+            window.open('../' + openBtn.dataset.open, '_blank');
+        } else if (del) boDelete(del.dataset.delete);
         else if (e.target === modal || e.target.closest('[data-close]')) boCloseDetail();
     });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') boCloseDetail(); });

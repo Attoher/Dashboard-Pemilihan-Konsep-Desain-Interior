@@ -2,8 +2,10 @@
  * Penyimpanan data online (Cloud Firestore).
  * Setiap mahasiswa punya satu dokumen: mahasiswa/{nrp}
  * Field: identitasData, sumberPustakaData, dashboardData, ideasData, winningCategory, updatedAt
- * NRP dibawa antar halaman lewat query string (?nrp=...).
+ * NRP aktif hanya diingat di tab ini (sessionStorage), tidak ditaruh di URL, supaya hasil
+ * mahasiswa lain tidak bisa dibuka sekadar dengan mengganti NRP di link.
  */
+const NRP_SESSION_KEY = 'nrpAktif';
 const NRP_PATTERN = /^[A-Za-z0-9_-]{3,30}$/;
 const SAVE_DELAY = 500;
 
@@ -24,15 +26,28 @@ function isValidNrp(nrp) {
     return NRP_PATTERN.test(nrp || '');
 }
 
+/** NRP yang sedang dikerjakan di tab ini. ?nrp= di URL sengaja diabaikan (dan dibuang). */
 function getNrp() {
-    const nrp = new URLSearchParams(window.location.search).get('nrp') || '';
-    return isValidNrp(nrp) ? nrp : '';
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('nrp')) {
+        params.delete('nrp');
+        const query = params.toString();
+        history.replaceState(null, '', window.location.pathname + (query ? '?' + query : ''));
+    }
+    try {
+        const nrp = sessionStorage.getItem(NRP_SESSION_KEY) || '';
+        return isValidNrp(nrp) ? nrp : '';
+    } catch {
+        return '';
+    }
 }
 
-function withNrp(url, nrp) {
-    const value = nrp || getNrp();
-    if (!value) return url;
-    return url + (url.includes('?') ? '&' : '?') + 'nrp=' + encodeURIComponent(value);
+function setActiveNrp(nrp) {
+    try {
+        sessionStorage.setItem(NRP_SESSION_KEY, nrp);
+    } catch {
+        // sessionStorage diblokir: NRP perlu diisi ulang di setiap halaman
+    }
 }
 
 function mahasiswaDoc(nrp) {

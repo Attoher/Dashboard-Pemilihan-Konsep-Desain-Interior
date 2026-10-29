@@ -77,7 +77,7 @@ async function masukNrp() {
     }
 
     currentNrp = nrp;
-    history.replaceState(null, '', withNrp(window.location.pathname, nrp));
+    setActiveNrp(nrp);
 
     if (data) {
         applyData(data);
@@ -647,7 +647,7 @@ async function goToIdeasPage() {
     saveMahasiswaField(currentNrp, 'winningCategory', category);
     await flushMahasiswa();
 
-    window.location.href = withNrp('pages/ideas.html?category=' + category, currentNrp);
+    window.location.href = 'pages/ideas.html?category=' + category;
 }
 
 window.onload = function() {

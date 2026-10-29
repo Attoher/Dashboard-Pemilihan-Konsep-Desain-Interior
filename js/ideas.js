@@ -518,14 +518,14 @@ function goBack() {
 
 async function goToDashboard() {
     await flushMahasiswa();
-    window.location.href = withNrp('../index.html', currentNrp);
+    window.location.href = '../index.html';
 }
 
 async function goToResultPage() {
     const categoryData = IDEAS_DATA[currentCategory];
     if (!categoryData) {
         await flushMahasiswa();
-        window.location.href = withNrp('result.html', currentNrp);
+        window.location.href = 'result.html';
         return;
     }
 
@@ -545,7 +545,7 @@ async function goToResultPage() {
     }
 
     await flushMahasiswa();
-    window.location.href = withNrp('result.html', currentNrp);
+    window.location.href = 'result.html';
 }
 
 function escapeHtml(text) {
