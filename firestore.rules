@@ -11,7 +11,8 @@ service cloud.firestore {
           'identitasData', 'sumberPustakaData', 'dashboardData',
           'ideasData', 'winningCategory', 'updatedAt'
         ]);
-      allow delete: if false;
+      // Hapus data mahasiswa dari halaman /back-office
+      allow delete: if nrp.matches('^[A-Za-z0-9_-]{3,30}$');
     }
   }
 }

@@ -1540,6 +1540,47 @@ textarea::placeholder,
 }
 
 /* ---------- Back office ---------- */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+.bo-actions {
+    width: 1%;
+    text-align: right;
+}
+
+.bo-delete {
+    display: inline-flex;
+    padding: 0.35rem;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: none;
+    color: var(--text-subtle);
+    cursor: pointer;
+}
+
+.bo-delete:hover,
+.bo-delete:focus-visible {
+    background: var(--danger-soft);
+    color: var(--danger);
+    outline: none;
+}
+
+.bo-delete-btn {
+    margin-left: auto;
+    background: var(--surface);
+    color: var(--danger);
+    border-color: #fecaca;
+}
+
+.bo-delete-btn:hover {
+    background: var(--danger-soft);
+}
 .bo-badge {
     padding: 0.3rem 0.75rem;
     border-radius: 999px;

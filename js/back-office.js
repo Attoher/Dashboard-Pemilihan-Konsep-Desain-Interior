@@ -170,11 +170,11 @@ function boRenderRows() {
     const rows = boFiltered();
     const tbody = document.getElementById('boRows');
     if (!boRecords.length) {
-        tbody.innerHTML = '<tr><td colspan="8" class="bo-empty">Belum ada mahasiswa yang mengisi.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" class="bo-empty">Belum ada mahasiswa yang mengisi.</td></tr>';
         return;
     }
     if (!rows.length) {
-        tbody.innerHTML = '<tr><td colspan="8" class="bo-empty">Tidak ada yang cocok dengan pencarian.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" class="bo-empty">Tidak ada yang cocok dengan pencarian.</td></tr>';
         return;
     }
     tbody.innerHTML = rows.map(r => `
@@ -188,6 +188,11 @@ function boRenderRows() {
             <td class="num${r.sources.length < 5 ? ' bo-warn' : ''}">${r.sources.length}</td>
             <td>${boProgressBar(r.progress)}</td>
             <td class="bo-muted">${boFormatDate(r.updated)}</td>
+            <td class="bo-actions">
+                <button type="button" class="bo-delete" data-delete="${boEscape(r.nrp)}" title="Hapus data ${boEscape(r.nama || r.nrp)}" aria-label="Hapus data ${boEscape(r.nama || r.nrp)}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+            </td>
         </tr>`).join('');
 }
 
@@ -246,6 +251,7 @@ function boOpenDetail(nrp) {
         <div class="bo-detail-actions">
             <a class="btn btn-secondary" href="${link('index.html')}" target="_blank" rel="noopener">Buka dashboard mahasiswa</a>
             <a class="btn btn-primary" href="${link('pages/result.html')}" target="_blank" rel="noopener">Lihat halaman hasil</a>
+            <button type="button" class="btn bo-delete-btn" data-delete="${boEscape(r.nrp)}">Hapus data</button>
         </div>
         <h4 class="bo-h4">Skor &amp; catatan</h4>
         <div class="bo-score-grid">${scoreBlocks}</div>
@@ -254,6 +260,30 @@ function boOpenDetail(nrp) {
         <h4 class="bo-h4">Ide &amp; ruangan</h4>
         ${ideaBlocks}`;
     document.getElementById('boDetail').classList.remove('hidden');
+}
+
+/** Hapus seluruh data seorang mahasiswa setelah dikonfirmasi. Tidak bisa dibatalkan. */
+async function boDelete(nrp) {
+    const r = boRecords.find(x => x.nrp === nrp);
+    if (!r) return;
+    const label = r.nama ? `<b>${boEscape(r.nama)}</b> (${boEscape(r.nrp)})` : `<b>${boEscape(r.nrp)}</b>`;
+    const ok = await showConfirm(
+        `Hapus semua data ${label}? Skor, catatan, sumber pustaka, dan ide akan hilang permanen.`,
+        'warning'
+    );
+    if (!ok) return;
+    try {
+        await firestore.collection('mahasiswa').doc(nrp).delete();
+        boCloseDetail();
+    } catch (error) {
+        console.error(error);
+        showAlert(
+            error.code === 'permission-denied'
+                ? 'Penghapusan ditolak aturan Firestore. Publish ulang firestore.rules terlebih dahulu.'
+                : 'Gagal menghapus data. Periksa koneksi internet Anda.',
+            'error'
+        );
+    }
 }
 
 function boCloseDetail() {
@@ -286,10 +316,16 @@ window.addEventListener('DOMContentLoaded', () => {
 
     const rows = document.getElementById('boRows');
     rows.addEventListener('click', e => {
+        const del = e.target.closest('[data-delete]');
+        if (del) {
+            boDelete(del.dataset.delete);
+            return;
+        }
         const tr = e.target.closest('tr[data-nrp]');
         if (tr) boOpenDetail(tr.dataset.nrp);
     });
     rows.addEventListener('keydown', e => {
+        if (e.target.closest('[data-delete]')) return;
         const tr = e.target.closest('tr[data-nrp]');
         if (tr && (e.key === 'Enter' || e.key === ' ')) {
             e.preventDefault();
@@ -299,13 +335,15 @@ window.addEventListener('DOMContentLoaded', () => {
 
     const modal = document.getElementById('boDetail');
     modal.addEventListener('click', e => {
-        if (e.target === modal || e.target.closest('[data-close]')) boCloseDetail();
+        const del = e.target.closest('[data-delete]');
+        if (del) boDelete(del.dataset.delete);
+        else if (e.target === modal || e.target.closest('[data-close]')) boCloseDetail();
     });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') boCloseDetail(); });
     document.getElementById('exportCsv').addEventListener('click', boExportCsv);
 
     if (!firestore) {
-        document.getElementById('boRows').innerHTML = '<tr><td colspan="8" class="bo-empty">Firebase belum dikonfigurasi.</td></tr>';
+        document.getElementById('boRows').innerHTML = '<tr><td colspan="9" class="bo-empty">Firebase belum dikonfigurasi.</td></tr>';
         return;
     }
     firestore.collection('mahasiswa').onSnapshot(snapshot => {
@@ -313,7 +351,7 @@ window.addEventListener('DOMContentLoaded', () => {
         boRender();
     }, error => {
         console.error(error);
-        document.getElementById('boRows').innerHTML = `<tr><td colspan="8" class="bo-empty">Gagal memuat data${error.code === 'permission-denied' ? ': aturan Firestore belum mengizinkan daftar mahasiswa (publish ulang firestore.rules).' : '.'}</td></tr>`;
+        document.getElementById('boRows').innerHTML = `<tr><td colspan="9" class="bo-empty">Gagal memuat data${error.code === 'permission-denied' ? ': aturan Firestore belum mengizinkan daftar mahasiswa (publish ulang firestore.rules).' : '.'}</td></tr>`;
     });
 
     // Label "x menit lalu" diperbarui tiap menit

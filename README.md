@@ -89,8 +89,9 @@ Rekap semua mahasiswa tersedia di **`/back-office`**. Tidak ada tautan ke halama
 - **Tabel mahasiswa:** pencarian, filter kategori, urutan, dan pembaruan realtime.
 - **Detail per mahasiswa:** skor dan catatan, sumber pustaka, ide dan ruangan, serta tautan ke dashboard dan halaman hasil mahasiswa tersebut.
 - **Export CSV** (bisa dibuka di Excel).
+- **Hapus data** mahasiswa, dari ikon tempat sampah di tabel atau tombol di jendela detail, dengan konfirmasi. Penghapusan permanen.
 
-Halaman ini **tidak memakai login**. Siapa pun yang tahu alamatnya bisa melihat rekap, dan `firestore.rules` mengizinkan daftar dokumen `mahasiswa` untuk keperluan ini.
+Halaman ini **tidak memakai login**. Siapa pun yang tahu alamatnya bisa melihat rekap, dan `firestore.rules` mengizinkan daftar dan penghapusan dokumen `mahasiswa` untuk keperluan ini.
 
 ## Setup Firebase
 
