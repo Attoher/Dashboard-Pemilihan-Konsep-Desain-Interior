@@ -6,6 +6,8 @@
  * mahasiswa lain tidak bisa dibuka sekadar dengan mengganti NRP di link.
  */
 const NRP_SESSION_KEY = 'nrpAktif';
+const NRP_HANDOFF_KEY = 'nrpTitipan';
+const NRP_HANDOFF_TTL = 15000;
 const NRP_PATTERN = /^[A-Za-z0-9_-]{3,30}$/;
 const SAVE_DELAY = 500;
 
@@ -35,6 +37,8 @@ function getNrp() {
         history.replaceState(null, '', window.location.pathname + (query ? '?' + query : ''));
     }
     try {
+        const handoff = takeNrpHandoff();
+        if (handoff) sessionStorage.setItem(NRP_SESSION_KEY, handoff);
         const nrp = sessionStorage.getItem(NRP_SESSION_KEY) || '';
         return isValidNrp(nrp) ? nrp : '';
     } catch {
@@ -47,6 +51,30 @@ function setActiveNrp(nrp) {
         sessionStorage.setItem(NRP_SESSION_KEY, nrp);
     } catch {
         // sessionStorage diblokir: NRP perlu diisi ulang di setiap halaman
+    }
+}
+
+/**
+ * Titipkan NRP untuk tab baru yang akan dibuka (back office). Browser tidak selalu menyalin
+ * sessionStorage ke tab baru, jadi NRP dititip sebentar di localStorage dan diambil sekali pakai.
+ */
+function handOffNrp(nrp) {
+    try {
+        localStorage.setItem(NRP_HANDOFF_KEY, JSON.stringify({ nrp, at: Date.now() }));
+    } catch {
+        // localStorage diblokir: halaman tujuan akan meminta NRP diisi
+    }
+}
+
+function takeNrpHandoff() {
+    const raw = localStorage.getItem(NRP_HANDOFF_KEY);
+    if (!raw) return '';
+    localStorage.removeItem(NRP_HANDOFF_KEY);
+    try {
+        const { nrp, at } = JSON.parse(raw);
+        return Date.now() - at < NRP_HANDOFF_TTL && isValidNrp(nrp) ? nrp : '';
+    } catch {
+        return '';
     }
 }
 

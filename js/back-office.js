@@ -211,7 +211,7 @@ function boOpenDetail(nrp) {
     if (!r) return;
     const dashboard = r.raw.dashboardData || {};
     const ideas = r.raw.ideasData || {};
-    // NRP tidak lewat URL: diset ke sesi tab lalu halaman dibuka di tab baru (sesi ikut tersalin)
+    // NRP tidak lewat URL: dititipkan sekali pakai (handOffNrp) lalu halaman dibuka di tab baru
     const open = (page, label, style) =>
         `<button type="button" class="btn ${style}" data-open="${page}" data-nrp-open="${boEscape(r.nrp)}">${label}</button>`;
 
@@ -344,7 +344,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const del = e.target.closest('[data-delete]');
         const openBtn = e.target.closest('[data-open]');
         if (openBtn) {
-            setActiveNrp(openBtn.dataset.nrpOpen);
+            handOffNrp(openBtn.dataset.nrpOpen);
             window.open('../' + openBtn.dataset.open, '_blank');
         } else if (del) boDelete(del.dataset.delete);
         else if (e.target === modal || e.target.closest('[data-close]')) boCloseDetail();
